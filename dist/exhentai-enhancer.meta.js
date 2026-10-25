@@ -1,21 +1,21 @@
 // ==UserScript==
-// @name               Exhentai Enhancer
-// @name:en            Exhentai Enhancer
-// @name:zh-TW         Exhentai Enhancer
-// @name:zh-CN         Exhentai Enhancer
+// @name               Exhentai Enhancer 汉化版
+// @name:en            Exhentai Enhancer (Chinese)
+// @name:zh-TW         Exhentai Enhancer 漢化版
+// @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
 // @version            1.21.0
 // @author             sk2589822
-// @description        improve UX of Gallery Page, Multi-Page Viewer and Front Page
-// @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page
-// @description:zh-TW  改善 Gallery Page、Multi-Page Viewer 和 Front Page 的使用者體驗
-// @description:zh-CN  改善 Gallery Page、Multi-Page Viewer 和 Front Page 的使用者體驗
+// @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
+// @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
+// @description:zh-TW  改善畫廊頁、多頁檢視器和列表頁的使用者體驗（漢化版）
+// @description:zh-CN  改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @license            MIT
 // @icon               https://vitejs.dev/logo.svg
 // @supportURL         https://github.com/sk2589822/Exhentai-Enhancer/issues
 // @match              https://exhentai.org/*
 // @match              https://e-hentai.org/*
-// @require            https://cdn.jsdelivr.net/npm/vue@3.5.34/dist/vue.global.prod.js
+// @require            https://cdn.jsdelivr.net/npm/vue@3.5.44/dist/vue.global.prod.js
 // @grant              GM.getValue
 // @grant              GM.registerMenuCommand
 // @grant              GM.setValue

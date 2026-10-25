@@ -13,11 +13,17 @@ import { getArchiveLinkAnchor } from '@/components/Gallery/utils/elements'
  */
 export type ArchiveDownloadType = 'org' | 'res'
 
+/**
+ * 送出表單時要帶的 `dlcheck` 值，站方會比對這兩段英文，所以不能翻譯
+ */
 const DOWNLOAD_LABELS: Record<ArchiveDownloadType, string> = {
   org: 'Download Original Archive',
   res: 'Download Resample Archive',
 }
 
+/**
+ * 站方回應中代表「已接受下載請求」的英文句子，用來判斷請求是否成功，不能翻譯
+ */
 const DOWNLOAD_ACCEPTED_TEXT = 'Locating archive server and preparing file for download...'
 
 const HAH_ORIGINAL_RESOLUTION = 'org'
@@ -47,7 +53,7 @@ const HAH_RESOLUTION_ATTRIBUTE = 'data-hathdl-xres'
  * 顯示給使用者看的解析度名稱，與 archiver 表格上的欄位標題一致
  */
 function getResolutionLabel(resolution: string) {
-  return resolution === HAH_ORIGINAL_RESOLUTION ? 'Original' : `${resolution}x`
+  return resolution === HAH_ORIGINAL_RESOLUTION ? '原始' : `${resolution}x`
 }
 
 const INLINE_CANCEL_CLASS = 'enhancer-archive-cancel'
@@ -55,8 +61,8 @@ const INLINE_CANCEL_CLASS = 'enhancer-archive-cancel'
 /**
  * 原生頁面上不會有「You unlocked ...」那句話當上下文，所以不沿用站方的 `cancel`
  */
-const INLINE_CANCEL_LABEL = 'Invalidate Archive'
-const INLINE_CANCEL_PENDING_LABEL = 'Invalidating...'
+const INLINE_CANCEL_LABEL = '使归档失效'
+const INLINE_CANCEL_PENDING_LABEL = '正在失效…'
 
 /**
  * archiver 只在存在未失效的 archive session 時才會輸出 #invalidate_form
@@ -207,11 +213,12 @@ export function useArchive() {
         if (parsedResponse) {
           link.classList.remove('is-fetching')
 
+          // 站方回應固定是英文，用英文關鍵字判斷是否排隊成功，訊息本文原樣保留
           if (/download has been queued/.test(parsedResponse)) {
-            toast.success(parsedResponse)
+            toast.success(`已加入下载队列：${parsedResponse}`)
             link.classList.add('is-finished')
           } else {
-            toast.error(parsedResponse)
+            toast.error(`下载请求失败：${parsedResponse}`)
           }
         }
 
@@ -259,7 +266,7 @@ export function useArchive() {
     const result = await requestDirectDownload(url, dltype)
 
     if (!result.success) {
-      toast.error('something went wrong. Open your console to see the response')
+      toast.error('出了点问题，请打开浏览器控制台查看返回内容')
       console.warn('Download failed, response HTML:', result.html)
       return false
     }
@@ -341,12 +348,12 @@ export function useArchive() {
     cancelButton.addEventListener('click', async event => {
       event.preventDefault()
 
-      cancelButton.innerHTML = 'canceling...'
+      cancelButton.innerHTML = '正在取消…'
 
       const doc = await cancelArchiveSession()
       if (!doc) {
         logger.error('failed to cancel the archive session.')
-        cancelButton.innerHTML = 'cancel'
+        cancelButton.innerHTML = '取消'
         return
       }
 
@@ -439,12 +446,12 @@ export function useArchive() {
 
     // 找得到其他解析度，就表示事件綁好了、只是這本 gallery 不提供這一階
     if (getElements(`[${HAH_RESOLUTION_ATTRIBUTE}]`, popup.value)?.length) {
-      toast.warning(`This gallery doesn't offer H@H ${getResolutionLabel(resolution)}.\n Open popup`)
+      toast.warning(`此画廊不提供 H@H ${getResolutionLabel(resolution)} 分辨率。\n 已打开弹窗`)
       return false
     }
 
     logger.error('hentai@Home links not found.')
-    toast.error('Failed to find the H@H links.\n Open popup')
+    toast.error('未能找到 H@H 下载链接。\n 已打开弹窗')
     return false
   }
 

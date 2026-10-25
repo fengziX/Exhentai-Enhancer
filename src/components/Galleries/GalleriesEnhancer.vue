@@ -70,7 +70,7 @@ const activeButton = ref<HTMLElement>()
 
 function setHideButtonState(button: HTMLElement, isHidden: boolean) {
   button.classList.toggle('is-hidden', isHidden)
-  button.title = isHidden ? 'Unhide gallery' : 'Hide gallery'
+  button.title = isHidden ? '取消隐藏此画廊' : '隐藏此画廊'
 }
 
 function appendHideButtons() {
@@ -132,10 +132,10 @@ async function appendArchiveButtons() {
     const button = document.createElement('span')
     button.classList.add('archive-button')
     button.textContent = 'A'
-    button.title = 'Show Archive'
+    button.title = '查看归档'
     button.onclick = async () => {
       isArchivePopupShow.value = !isArchivePopupShow.value
-      archiveInnerHtml.value = 'Fetching...'
+      archiveInnerHtml.value = '加载中…'
       activeButton.value = button
 
       const link = getElement('a', gallery) as HTMLAnchorElement

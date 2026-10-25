@@ -38,6 +38,7 @@ export function useFavorite(favoriteInnerHtml: Ref<string>) {
     async function setFavorite(category: string) {
       const formData = new FormData()
       const favoriteNote = (getElement<HTMLTextAreaElement>('[name=favnote]')?.value) as string
+      // 這兩個字串是送出給站方的表單值（等同按鈕文字），站方靠它判斷動作，不能在地化
       const apply = category === 'favdel'
         ? 'Apply Changes'
         : 'Add to Favorites'

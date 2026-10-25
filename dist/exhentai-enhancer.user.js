@@ -1,21 +1,21 @@
 // ==UserScript==
-// @name               Exhentai Enhancer
-// @name:en            Exhentai Enhancer
-// @name:zh-TW         Exhentai Enhancer
-// @name:zh-CN         Exhentai Enhancer
+// @name               Exhentai Enhancer 汉化版
+// @name:en            Exhentai Enhancer (Chinese)
+// @name:zh-TW         Exhentai Enhancer 漢化版
+// @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
 // @version            1.21.0
 // @author             sk2589822
-// @description        improve UX of Gallery Page, Multi-Page Viewer and Front Page
-// @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page
-// @description:zh-TW  改善 Gallery Page、Multi-Page Viewer 和 Front Page 的使用者體驗
-// @description:zh-CN  改善 Gallery Page、Multi-Page Viewer 和 Front Page 的使用者體驗
+// @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
+// @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
+// @description:zh-TW  改善畫廊頁、多頁檢視器和列表頁的使用者體驗（漢化版）
+// @description:zh-CN  改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @license            MIT
 // @icon               https://vitejs.dev/logo.svg
 // @supportURL         https://github.com/sk2589822/Exhentai-Enhancer/issues
 // @match              https://exhentai.org/*
 // @match              https://e-hentai.org/*
-// @require            https://cdn.jsdelivr.net/npm/vue@3.5.34/dist/vue.global.prod.js
+// @require            https://cdn.jsdelivr.net/npm/vue@3.5.44/dist/vue.global.prod.js
 // @grant              GM.getValue
 // @grant              GM.registerMenuCommand
 // @grant              GM.setValue
@@ -29,7 +29,7 @@
 // ==/UserScript==
 
 (function(vue) {
-  'use strict';
+	"use strict";
 	var __create = Object.create;
 	var __defProp$2 = Object.defineProperty;
 	var __getOwnPropDesc$1 = Object.getOwnPropertyDescriptor;
@@ -46,7 +46,7 @@
 		}
 		return to;
 	};
-	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps$1(isNodeMode || !mod || !mod.__esModule ? __defProp$2(target, "default", {
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps$1(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp$2.call(mod, "default") ? __defProp$2(target, "default", {
 		value: mod,
 		enumerable: true
 	}) : target, mod));
@@ -85,599 +85,6 @@
 		return to;
 	};
 	var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget && __copyProps(secondTarget, mod, "default"));
-	function tryOnScopeDispose$1(fn, failSilently) {
-		if ((0, vue.getCurrentScope)()) {
-			(0, vue.onScopeDispose)(fn, failSilently);
-			return true;
-		}
-		return false;
-	}
-	var isClient$1 = typeof window !== "undefined" && typeof document !== "undefined";
-	typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
-	var notNullish = (val) => val != null;
-	var toString = Object.prototype.toString;
-	var isObject$1 = (val) => toString.call(val) === "[object Object]";
-	var noop = () => {};
-	function toRef$2(...args) {
-		if (args.length !== 1) return (0, vue.toRef)(...args);
-		const r = args[0];
-		return typeof r === "function" ? (0, vue.readonly)((0, vue.customRef)(() => ({
-			get: r,
-			set: noop
-		}))) : (0, vue.ref)(r);
-	}
-	function createFilterWrapper(filter, fn) {
-		function wrapper(...args) {
-			return new Promise((resolve, reject) => {
-				Promise.resolve(filter(() => fn.apply(this, args), {
-					fn,
-					thisArg: this,
-					args
-				})).then(resolve).catch(reject);
-			});
-		}
-		return wrapper;
-	}
-	var bypassFilter = (invoke) => {
-		return invoke();
-	};
-	function pausableFilter(extendFilter = bypassFilter, options = {}) {
-		const { initialState = "active" } = options;
-		const isActive = toRef$2(initialState === "active");
-		function pause() {
-			isActive.value = false;
-		}
-		function resume() {
-			isActive.value = true;
-		}
-		const eventFilter = (...args) => {
-			if (isActive.value) extendFilter(...args);
-		};
-		return {
-			isActive: (0, vue.shallowReadonly)(isActive),
-			pause,
-			resume,
-			eventFilter
-		};
-	}
-	function objectEntries(obj) {
-		return Object.entries(obj);
-	}
-	function toArray(value) {
-		return Array.isArray(value) ? value : [value];
-	}
-	function getLifeCycleTarget(target) {
-		return target || (0, vue.getCurrentInstance)();
-	}
-	function createSharedComposable(composable) {
-		if (!isClient$1) return composable;
-		let subscribers = 0;
-		let state;
-		let scope;
-		const dispose = () => {
-			subscribers -= 1;
-			if (scope && subscribers <= 0) {
-				scope.stop();
-				state = void 0;
-				scope = void 0;
-			}
-		};
-		return ((...args) => {
-			subscribers += 1;
-			if (!scope) {
-				scope = (0, vue.effectScope)(true);
-				state = scope.run(() => composable(...args));
-			}
-			tryOnScopeDispose$1(dispose);
-			return state;
-		});
-	}
-	function watchWithFilter(source, cb, options = {}) {
-		const { eventFilter = bypassFilter, ...watchOptions } = options;
-		return (0, vue.watch)(source, createFilterWrapper(eventFilter, cb), watchOptions);
-	}
-	function watchPausable(source, cb, options = {}) {
-		const { eventFilter: filter, initialState = "active", ...watchOptions } = options;
-		const { eventFilter, pause, resume, isActive } = pausableFilter(filter, { initialState });
-		return {
-			stop: watchWithFilter(source, cb, {
-				...watchOptions,
-				eventFilter
-			}),
-			pause,
-			resume,
-			isActive
-		};
-	}
-	function tryOnMounted(fn, sync = true, target) {
-		if (getLifeCycleTarget(target)) (0, vue.onMounted)(fn, target);
-		else if (sync) fn();
-		else (0, vue.nextTick)(fn);
-	}
-	function watchImmediate(source, cb, options) {
-		return (0, vue.watch)(source, cb, {
-			...options,
-			immediate: true
-		});
-	}
-	var defaultWindow = isClient$1 ? window : void 0;
-	var defaultDocument$1 = isClient$1 ? window.document : void 0;
-	isClient$1 && window.navigator;
-	isClient$1 && window.location;
-	function unrefElement$1(elRef) {
-		var _$el;
-		const plain = (0, vue.toValue)(elRef);
-		return (_$el = plain === null || plain === void 0 ? void 0 : plain.$el) !== null && _$el !== void 0 ? _$el : plain;
-	}
-	function useEventListener(...args) {
-		const register = (el, event, listener, options) => {
-			el.addEventListener(event, listener, options);
-			return () => el.removeEventListener(event, listener, options);
-		};
-		const firstParamTargets = (0, vue.computed)(() => {
-			const test = toArray((0, vue.toValue)(args[0])).filter((e) => e != null);
-			return test.every((e) => typeof e !== "string") ? test : void 0;
-		});
-		return watchImmediate(() => {
-			var _firstParamTargets$va, _firstParamTargets$va2;
-			return [
-				(_firstParamTargets$va = (_firstParamTargets$va2 = firstParamTargets.value) === null || _firstParamTargets$va2 === void 0 ? void 0 : _firstParamTargets$va2.map((e) => unrefElement$1(e))) !== null && _firstParamTargets$va !== void 0 ? _firstParamTargets$va : [defaultWindow].filter((e) => e != null),
-				toArray((0, vue.toValue)(firstParamTargets.value ? args[1] : args[0])),
-				toArray((0, vue.unref)(firstParamTargets.value ? args[2] : args[1])),
-				(0, vue.toValue)(firstParamTargets.value ? args[3] : args[2])
-			];
-		}, ([raw_targets, raw_events, raw_listeners, raw_options], _, onCleanup) => {
-			if (!(raw_targets === null || raw_targets === void 0 ? void 0 : raw_targets.length) || !(raw_events === null || raw_events === void 0 ? void 0 : raw_events.length) || !(raw_listeners === null || raw_listeners === void 0 ? void 0 : raw_listeners.length)) return;
-			const optionsClone = isObject$1(raw_options) ? { ...raw_options } : raw_options;
-			const cleanups = raw_targets.flatMap((el) => raw_events.flatMap((event) => raw_listeners.map((listener) => register(el, event, listener, optionsClone))));
-			onCleanup(() => {
-				cleanups.forEach((fn) => fn());
-			});
-		}, { flush: "post" });
-	}
-	function useMounted() {
-		const isMounted = (0, vue.shallowRef)(false);
-		const instance = (0, vue.getCurrentInstance)();
-		if (instance) (0, vue.onMounted)(() => {
-			isMounted.value = true;
-		}, instance);
-		return isMounted;
-	}
-	function useSupported(callback) {
-		const isMounted = useMounted();
-		return (0, vue.computed)(() => {
-			isMounted.value;
-			return Boolean(callback());
-		});
-	}
-	function useMutationObserver(target, callback, options = {}) {
-		const { window = defaultWindow, ...mutationOptions } = options;
-		let observer;
-		const isSupported = useSupported(() => window && "MutationObserver" in window);
-		const cleanup = () => {
-			if (observer) {
-				observer.disconnect();
-				observer = void 0;
-			}
-		};
-		const stopWatch = (0, vue.watch)((0, vue.computed)(() => {
-			const items = toArray((0, vue.toValue)(target)).map(unrefElement$1).filter(notNullish);
-			return new Set(items);
-		}), (newTargets) => {
-			cleanup();
-			if (isSupported.value && newTargets.size) {
-				observer = new MutationObserver(callback);
-				newTargets.forEach((el) => observer.observe(el, mutationOptions));
-			}
-		}, {
-			immediate: true,
-			flush: "post"
-		});
-		const takeRecords = () => {
-			return observer === null || observer === void 0 ? void 0 : observer.takeRecords();
-		};
-		const stop = () => {
-			stopWatch();
-			cleanup();
-		};
-		tryOnScopeDispose$1(stop);
-		return {
-			isSupported,
-			stop,
-			takeRecords
-		};
-	}
-	var WRITABLE_PROPERTIES = [
-		"hash",
-		"host",
-		"hostname",
-		"href",
-		"pathname",
-		"port",
-		"protocol",
-		"search"
-	];
-	function useBrowserLocation(options = {}) {
-		const { window = defaultWindow } = options;
-		const refs = Object.fromEntries(WRITABLE_PROPERTIES.map((key) => [key, (0, vue.ref)()]));
-		for (const [key, ref] of objectEntries(refs)) (0, vue.watch)(ref, (value) => {
-			if (!(window === null || window === void 0 ? void 0 : window.location) || window.location[key] === value) return;
-			window.location[key] = value;
-		});
-		const buildState = (trigger) => {
-			var _window$location;
-			const { state, length } = (window === null || window === void 0 ? void 0 : window.history) || {};
-			const { origin } = (window === null || window === void 0 ? void 0 : window.location) || {};
-			for (const key of WRITABLE_PROPERTIES) refs[key].value = window === null || window === void 0 || (_window$location = window.location) === null || _window$location === void 0 ? void 0 : _window$location[key];
-			return (0, vue.reactive)({
-				trigger,
-				state,
-				length,
-				origin,
-				...refs
-			});
-		};
-		const state = (0, vue.ref)(buildState("load"));
-		if (window) {
-			const listenerOptions = { passive: true };
-			useEventListener(window, "popstate", () => state.value = buildState("popstate"), listenerOptions);
-			useEventListener(window, "hashchange", () => state.value = buildState("hashchange"), listenerOptions);
-		}
-		return state;
-	}
-	var _global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-	var globalKey = "__vueuse_ssr_handlers__";
-	var handlers = getHandlers();
-	function getHandlers() {
-		if (!(globalKey in _global)) _global[globalKey] = _global[globalKey] || {};
-		return _global[globalKey];
-	}
-	function getSSRHandler(key, fallback) {
-		return handlers[key] || fallback;
-	}
-	function guessSerializerType(rawInit) {
-		return rawInit == null ? "any" : rawInit instanceof Set ? "set" : rawInit instanceof Map ? "map" : rawInit instanceof Date ? "date" : typeof rawInit === "boolean" ? "boolean" : typeof rawInit === "string" ? "string" : typeof rawInit === "object" ? "object" : !Number.isNaN(rawInit) ? "number" : "any";
-	}
-	var StorageSerializers = {
-		boolean: {
-			read: (v) => v === "true",
-			write: (v) => String(v)
-		},
-		object: {
-			read: (v) => JSON.parse(v),
-			write: (v) => JSON.stringify(v)
-		},
-		number: {
-			read: (v) => Number.parseFloat(v),
-			write: (v) => String(v)
-		},
-		any: {
-			read: (v) => v,
-			write: (v) => String(v)
-		},
-		string: {
-			read: (v) => v,
-			write: (v) => String(v)
-		},
-		map: {
-			read: (v) => new Map(JSON.parse(v)),
-			write: (v) => JSON.stringify(Array.from(v.entries()))
-		},
-		set: {
-			read: (v) => new Set(JSON.parse(v)),
-			write: (v) => JSON.stringify(Array.from(v))
-		},
-		date: {
-			read: (v) => new Date(v),
-			write: (v) => v.toISOString()
-		}
-	};
-	var customStorageEventName = "vueuse-storage";
-	function useStorage(key, defaults, storage, options = {}) {
-		var _options$serializer;
-		const { flush = "pre", deep = true, listenToStorageChanges = true, writeDefaults = true, mergeDefaults = false, shallow, window = defaultWindow, eventFilter, onError = (e) => {
-			console.error(e);
-		}, initOnMounted } = options;
-		const data = (shallow ? vue.shallowRef : vue.ref)(typeof defaults === "function" ? defaults() : defaults);
-		const keyComputed = (0, vue.computed)(() => (0, vue.toValue)(key));
-		if (!storage) try {
-			storage = getSSRHandler("getDefaultStorage", () => defaultWindow === null || defaultWindow === void 0 ? void 0 : defaultWindow.localStorage)();
-		} catch (e) {
-			onError(e);
-		}
-		if (!storage) return data;
-		const rawInit = (0, vue.toValue)(defaults);
-		const type = guessSerializerType(rawInit);
-		const serializer = (_options$serializer = options.serializer) !== null && _options$serializer !== void 0 ? _options$serializer : StorageSerializers[type];
-		const { pause: pauseWatch, resume: resumeWatch } = watchPausable(data, (newValue) => write(newValue), {
-			flush,
-			deep,
-			eventFilter
-		});
-		(0, vue.watch)(keyComputed, () => update(), { flush });
-		let firstMounted = false;
-		const onStorageEvent = (ev) => {
-			if (initOnMounted && !firstMounted) return;
-			update(ev);
-		};
-		const onStorageCustomEvent = (ev) => {
-			if (initOnMounted && !firstMounted) return;
-			updateFromCustomEvent(ev);
-		};
-		if (window && listenToStorageChanges) if (storage instanceof Storage) useEventListener(window, "storage", onStorageEvent, { passive: true });
-		else useEventListener(window, customStorageEventName, onStorageCustomEvent);
-		if (initOnMounted) tryOnMounted(() => {
-			firstMounted = true;
-			update();
-		});
-		else update();
-		function dispatchWriteEvent(oldValue, newValue) {
-			if (window) {
-				const payload = {
-					key: keyComputed.value,
-					oldValue,
-					newValue,
-					storageArea: storage
-				};
-				window.dispatchEvent(storage instanceof Storage ? new StorageEvent("storage", payload) : new CustomEvent(customStorageEventName, { detail: payload }));
-			}
-		}
-		function write(v) {
-			try {
-				const oldValue = storage.getItem(keyComputed.value);
-				if (v == null) {
-					dispatchWriteEvent(oldValue, null);
-					storage.removeItem(keyComputed.value);
-				} else {
-					const serialized = serializer.write(v);
-					if (oldValue !== serialized) {
-						storage.setItem(keyComputed.value, serialized);
-						dispatchWriteEvent(oldValue, serialized);
-					}
-				}
-			} catch (e) {
-				onError(e);
-			}
-		}
-		function read(event) {
-			const rawValue = event ? event.newValue : storage.getItem(keyComputed.value);
-			if (rawValue == null) {
-				if (writeDefaults && rawInit != null) storage.setItem(keyComputed.value, serializer.write(rawInit));
-				return rawInit;
-			} else if (!event && mergeDefaults) {
-				const value = serializer.read(rawValue);
-				if (typeof mergeDefaults === "function") return mergeDefaults(value, rawInit);
-				else if (type === "object" && !Array.isArray(value)) return {
-					...rawInit,
-					...value
-				};
-				return value;
-			} else if (typeof rawValue !== "string") return rawValue;
-			else return serializer.read(rawValue);
-		}
-		function update(event) {
-			if (event && event.storageArea !== storage) return;
-			if (event && event.key == null) {
-				data.value = rawInit;
-				return;
-			}
-			if (event && event.key !== keyComputed.value) return;
-			pauseWatch();
-			try {
-				const serializedData = serializer.write(data.value);
-				if (event === void 0 || (event === null || event === void 0 ? void 0 : event.newValue) !== serializedData) data.value = read(event);
-			} catch (e) {
-				onError(e);
-			} finally {
-				if (event) (0, vue.nextTick)(resumeWatch);
-				else resumeWatch();
-			}
-		}
-		function updateFromCustomEvent(event) {
-			update(event.detail);
-		}
-		return data;
-	}
-	function useResizeObserver(target, callback, options = {}) {
-		const { window = defaultWindow, ...observerOptions } = options;
-		let observer;
-		const isSupported = useSupported(() => window && "ResizeObserver" in window);
-		const cleanup = () => {
-			if (observer) {
-				observer.disconnect();
-				observer = void 0;
-			}
-		};
-		const stopWatch = (0, vue.watch)((0, vue.computed)(() => {
-			const _targets = (0, vue.toValue)(target);
-			return Array.isArray(_targets) ? _targets.map((el) => unrefElement$1(el)) : [unrefElement$1(_targets)];
-		}), (els) => {
-			cleanup();
-			if (isSupported.value && window) {
-				observer = new ResizeObserver(callback);
-				for (const _el of els) if (_el) observer.observe(_el, observerOptions);
-			}
-		}, {
-			immediate: true,
-			flush: "post"
-		});
-		const stop = () => {
-			cleanup();
-			stopWatch();
-		};
-		tryOnScopeDispose$1(stop);
-		return {
-			isSupported,
-			stop
-		};
-	}
-	function useElementBounding(target, options = {}) {
-		const { reset = true, windowResize = true, windowScroll = true, immediate = true, updateTiming = "sync" } = options;
-		const height = (0, vue.shallowRef)(0);
-		const bottom = (0, vue.shallowRef)(0);
-		const left = (0, vue.shallowRef)(0);
-		const right = (0, vue.shallowRef)(0);
-		const top = (0, vue.shallowRef)(0);
-		const width = (0, vue.shallowRef)(0);
-		const x = (0, vue.shallowRef)(0);
-		const y = (0, vue.shallowRef)(0);
-		function recalculate() {
-			const el = unrefElement$1(target);
-			if (!el) {
-				if (reset) {
-					height.value = 0;
-					bottom.value = 0;
-					left.value = 0;
-					right.value = 0;
-					top.value = 0;
-					width.value = 0;
-					x.value = 0;
-					y.value = 0;
-				}
-				return;
-			}
-			const rect = el.getBoundingClientRect();
-			height.value = rect.height;
-			bottom.value = rect.bottom;
-			left.value = rect.left;
-			right.value = rect.right;
-			top.value = rect.top;
-			width.value = rect.width;
-			x.value = rect.x;
-			y.value = rect.y;
-		}
-		function update() {
-			if (updateTiming === "sync") recalculate();
-			else if (updateTiming === "next-frame") requestAnimationFrame(() => recalculate());
-		}
-		useResizeObserver(target, update);
-		(0, vue.watch)(() => unrefElement$1(target), (ele) => !ele && update());
-		useMutationObserver(target, update, { attributeFilter: ["style", "class"] });
-		if (windowScroll) useEventListener("scroll", update, {
-			capture: true,
-			passive: true
-		});
-		if (windowResize) useEventListener("resize", update, { passive: true });
-		tryOnMounted(() => {
-			if (immediate) update();
-		});
-		return {
-			height,
-			bottom,
-			left,
-			right,
-			top,
-			width,
-			x,
-			y,
-			update
-		};
-	}
-	var eventHandlers = [
-		"fullscreenchange",
-		"webkitfullscreenchange",
-		"webkitendfullscreen",
-		"mozfullscreenchange",
-		"MSFullscreenChange"
-	];
-	function useFullscreen(target, options = {}) {
-		const { document = defaultDocument$1, autoExit = false } = options;
-		const targetRef = (0, vue.computed)(() => {
-			var _unrefElement;
-			return (_unrefElement = unrefElement$1(target)) !== null && _unrefElement !== void 0 ? _unrefElement : document === null || document === void 0 ? void 0 : document.documentElement;
-		});
-		const isFullscreen = (0, vue.shallowRef)(false);
-		const requestMethod = (0, vue.computed)(() => {
-			return [
-				"requestFullscreen",
-				"webkitRequestFullscreen",
-				"webkitEnterFullscreen",
-				"webkitEnterFullScreen",
-				"webkitRequestFullScreen",
-				"mozRequestFullScreen",
-				"msRequestFullscreen"
-			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
-		});
-		const exitMethod = (0, vue.computed)(() => {
-			return [
-				"exitFullscreen",
-				"webkitExitFullscreen",
-				"webkitExitFullScreen",
-				"webkitCancelFullScreen",
-				"mozCancelFullScreen",
-				"msExitFullscreen"
-			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
-		});
-		const fullscreenEnabled = (0, vue.computed)(() => {
-			return [
-				"fullScreen",
-				"webkitIsFullScreen",
-				"webkitDisplayingFullscreen",
-				"mozFullScreen",
-				"msFullscreenElement"
-			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
-		});
-		const fullscreenElementMethod = [
-			"fullscreenElement",
-			"webkitFullscreenElement",
-			"mozFullScreenElement",
-			"msFullscreenElement"
-		].find((m) => document && m in document);
-		const isSupported = useSupported(() => targetRef.value && document && requestMethod.value !== void 0 && exitMethod.value !== void 0 && fullscreenEnabled.value !== void 0);
-		const isCurrentElementFullScreen = () => {
-			if (fullscreenElementMethod) return (document === null || document === void 0 ? void 0 : document[fullscreenElementMethod]) === targetRef.value;
-			return false;
-		};
-		const isElementFullScreen = () => {
-			if (fullscreenEnabled.value) if (document && document[fullscreenEnabled.value] != null) return document[fullscreenEnabled.value];
-			else {
-				const target = targetRef.value;
-				if ((target === null || target === void 0 ? void 0 : target[fullscreenEnabled.value]) != null) return Boolean(target[fullscreenEnabled.value]);
-			}
-			return false;
-		};
-		async function exit() {
-			if (!isSupported.value || !isFullscreen.value) return;
-			if (exitMethod.value) if ((document === null || document === void 0 ? void 0 : document[exitMethod.value]) != null) await document[exitMethod.value]();
-			else {
-				const target = targetRef.value;
-				if ((target === null || target === void 0 ? void 0 : target[exitMethod.value]) != null) await target[exitMethod.value]();
-			}
-			isFullscreen.value = false;
-		}
-		async function enter() {
-			if (!isSupported.value || isFullscreen.value) return;
-			if (isElementFullScreen()) await exit();
-			const target = targetRef.value;
-			if (requestMethod.value && (target === null || target === void 0 ? void 0 : target[requestMethod.value]) != null) {
-				await target[requestMethod.value]();
-				isFullscreen.value = true;
-			}
-		}
-		async function toggle() {
-			await (isFullscreen.value ? exit() : enter());
-		}
-		const handlerCallback = () => {
-			const isElementFullScreenValue = isElementFullScreen();
-			if (!isElementFullScreenValue || isElementFullScreenValue && isCurrentElementFullScreen()) isFullscreen.value = isElementFullScreenValue;
-		};
-		const listenerOptions = {
-			capture: false,
-			passive: true
-		};
-		useEventListener(document, eventHandlers, handlerCallback, listenerOptions);
-		useEventListener(() => unrefElement$1(targetRef), eventHandlers, handlerCallback, listenerOptions);
-		tryOnMounted(handlerCallback, false);
-		if (autoExit) tryOnScopeDispose$1(exit);
-		return {
-			isSupported,
-			isFullscreen,
-			enter,
-			exit,
-			toggle
-		};
-	}
-	Number.POSITIVE_INFINITY;
 	var lib_exports = __exportAll({
 		Vue: () => vue,
 		Vue2: () => void 0,
@@ -705,7 +112,70 @@
 		}
 		delete target[key];
 	}
-	function tryOnScopeDispose(fn) {
+	function tryOnScopeDispose$2(fn) {
+		if ((0, lib_exports.getCurrentScope)()) {
+			(0, lib_exports.onScopeDispose)(fn);
+			return true;
+		}
+		return false;
+	}
+	function toValue$2(r) {
+		return typeof r === "function" ? r() : (0, lib_exports.unref)(r);
+	}
+	var isClient$2 = typeof window !== "undefined" && typeof document !== "undefined";
+	typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
+	var toString$1 = Object.prototype.toString;
+	var isObject$2 = (val) => toString$1.call(val) === "[object Object]";
+	var noop$1 = () => {};
+	function unrefElement$2(elRef) {
+		var _a;
+		const plain = toValue$2(elRef);
+		return (_a = plain == null ? void 0 : plain.$el) != null ? _a : plain;
+	}
+	var defaultWindow$1 = isClient$2 ? window : void 0;
+	isClient$2 && window.document;
+	isClient$2 && window.navigator;
+	isClient$2 && window.location;
+	function useEventListener$1(...args) {
+		let target;
+		let events;
+		let listeners;
+		let options;
+		if (typeof args[0] === "string" || Array.isArray(args[0])) {
+			[events, listeners, options] = args;
+			target = defaultWindow$1;
+		} else [target, events, listeners, options] = args;
+		if (!target) return noop$1;
+		if (!Array.isArray(events)) events = [events];
+		if (!Array.isArray(listeners)) listeners = [listeners];
+		const cleanups = [];
+		const cleanup = () => {
+			cleanups.forEach((fn) => fn());
+			cleanups.length = 0;
+		};
+		const register = (el, event, listener, options2) => {
+			el.addEventListener(event, listener, options2);
+			return () => el.removeEventListener(event, listener, options2);
+		};
+		const stopWatch = (0, lib_exports.watch)(() => [unrefElement$2(target), toValue$2(options)], ([el, options2]) => {
+			cleanup();
+			if (!el) return;
+			const optionsClone = isObject$2(options2) ? { ...options2 } : options2;
+			cleanups.push(...events.flatMap((event) => {
+				return listeners.map((listener) => register(el, event, listener, optionsClone));
+			}));
+		}, {
+			immediate: true,
+			flush: "post"
+		});
+		const stop = () => {
+			stopWatch();
+			cleanup();
+		};
+		tryOnScopeDispose$2(stop);
+		return stop;
+	}
+	function tryOnScopeDispose$1(fn) {
 		if ((0, lib_exports.getCurrentScope)()) {
 			(0, lib_exports.onScopeDispose)(fn);
 			return true;
@@ -715,22 +185,22 @@
 	function toValue$1(r) {
 		return typeof r === "function" ? r() : (0, lib_exports.unref)(r);
 	}
-	var isClient = typeof window !== "undefined" && typeof document !== "undefined";
+	var isClient$1 = typeof window !== "undefined" && typeof document !== "undefined";
 	typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
-	function unrefElement(elRef) {
+	function unrefElement$1(elRef) {
 		var _a;
 		const plain = toValue$1(elRef);
 		return (_a = plain == null ? void 0 : plain.$el) != null ? _a : plain;
 	}
-	isClient && window.document;
-	isClient && window.navigator;
-	isClient && window.location;
-	Number.POSITIVE_INFINITY;
+	isClient$1 && window.document;
+	isClient$1 && window.navigator;
+	isClient$1 && window.location;
 	var candidateSelectors = [
 		"input:not([inert]):not([inert] *)",
 		"select:not([inert]):not([inert] *)",
 		"textarea:not([inert]):not([inert] *)",
 		"a[href]:not([inert]):not([inert] *)",
+		"area[href]:not([inert]):not([inert] *)",
 		"button:not([inert]):not([inert] *)",
 		"[tabindex]:not(slot):not([inert]):not([inert] *)",
 		"audio[controls]:not([inert]):not([inert] *)",
@@ -743,21 +213,19 @@
 	var NoElement = typeof Element === "undefined";
 	var matches = NoElement ? function() {} : Element.prototype.matches || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 	var getRootNode = !NoElement && Element.prototype.getRootNode ? function(element) {
-		var _element$getRootNode;
-		return element === null || element === void 0 ? void 0 : (_element$getRootNode = element.getRootNode) === null || _element$getRootNode === void 0 ? void 0 : _element$getRootNode.call(element);
+		return element == null || element.getRootNode == null ? void 0 : element.getRootNode();
 	} : function(element) {
-		return element === null || element === void 0 ? void 0 : element.ownerDocument;
+		return element == null ? void 0 : element.ownerDocument;
 	};
 	var _isInert = function isInert(node, lookUp) {
-		var _node$getAttribute;
 		if (lookUp === void 0) lookUp = true;
-		var inertAtt = node === null || node === void 0 ? void 0 : (_node$getAttribute = node.getAttribute) === null || _node$getAttribute === void 0 ? void 0 : _node$getAttribute.call(node, "inert");
+		var inertAtt = node == null || node.getAttribute == null ? void 0 : node.getAttribute("inert");
 		return inertAtt === "" || inertAtt === "true" || lookUp && node && (typeof node.closest === "function" ? node.closest("[inert]") : _isInert(node.parentNode));
 	};
 	var isContentEditable = function isContentEditable(node) {
-		var _node$getAttribute2;
-		var attValue = node === null || node === void 0 ? void 0 : (_node$getAttribute2 = node.getAttribute) === null || _node$getAttribute2 === void 0 ? void 0 : _node$getAttribute2.call(node, "contenteditable");
-		return attValue === "" || attValue === "true";
+		var _node$getAttribute;
+		var attValue = node == null || node.getAttribute == null || (_node$getAttribute = node.getAttribute("contenteditable")) == null ? void 0 : _node$getAttribute.toLowerCase();
+		return attValue === "" || attValue === "true" || attValue === "plaintext-only";
 	};
 	var getCandidates = function getCandidates(el, includeContainer, filter) {
 		if (_isInert(el)) return [];
@@ -854,16 +322,16 @@
 	var isNodeAttached = function isNodeAttached(node) {
 		var _nodeRoot;
 		var nodeRoot = node && getRootNode(node);
-		var nodeRootHost = (_nodeRoot = nodeRoot) === null || _nodeRoot === void 0 ? void 0 : _nodeRoot.host;
+		var nodeRootHost = (_nodeRoot = nodeRoot) == null ? void 0 : _nodeRoot.host;
 		var attached = false;
 		if (nodeRoot && nodeRoot !== node) {
-			var _nodeRootHost, _nodeRootHost$ownerDo, _node$ownerDocument;
-			attached = !!((_nodeRootHost = nodeRootHost) !== null && _nodeRootHost !== void 0 && (_nodeRootHost$ownerDo = _nodeRootHost.ownerDocument) !== null && _nodeRootHost$ownerDo !== void 0 && _nodeRootHost$ownerDo.contains(nodeRootHost) || node !== null && node !== void 0 && (_node$ownerDocument = node.ownerDocument) !== null && _node$ownerDocument !== void 0 && _node$ownerDocument.contains(node));
+			var _nodeRootHost, _node$ownerDocument;
+			attached = !!((_nodeRootHost = nodeRootHost) != null && (_nodeRootHost = _nodeRootHost.ownerDocument) != null && _nodeRootHost.contains(nodeRootHost) || node != null && (_node$ownerDocument = node.ownerDocument) != null && _node$ownerDocument.contains(node));
 			while (!attached && nodeRootHost) {
-				var _nodeRoot2, _nodeRootHost2, _nodeRootHost2$ownerD;
+				var _nodeRoot2, _nodeRootHost2;
 				nodeRoot = getRootNode(nodeRootHost);
-				nodeRootHost = (_nodeRoot2 = nodeRoot) === null || _nodeRoot2 === void 0 ? void 0 : _nodeRoot2.host;
-				attached = !!((_nodeRootHost2 = nodeRootHost) !== null && _nodeRootHost2 !== void 0 && (_nodeRootHost2$ownerD = _nodeRootHost2.ownerDocument) !== null && _nodeRootHost2$ownerD !== void 0 && _nodeRootHost2$ownerD.contains(nodeRootHost));
+				nodeRootHost = (_nodeRoot2 = nodeRoot) == null ? void 0 : _nodeRoot2.host;
+				attached = !!((_nodeRootHost2 = nodeRootHost) != null && (_nodeRootHost2 = _nodeRootHost2.ownerDocument) != null && _nodeRootHost2.contains(nodeRootHost));
 			}
 		}
 		return attached;
@@ -883,7 +351,8 @@
 				checkVisibilityCSS: true
 			});
 		}
-		if (getComputedStyle(node).visibility === "hidden") return true;
+		var visibility = getComputedStyle(node).visibility;
+		if (visibility === "hidden" || visibility === "collapse") return true;
 		var nodeUnderDetails = matches.call(node, "details>summary:first-of-type") ? node.parentElement : node;
 		if (matches.call(nodeUnderDetails, "details:not([open]) *")) return true;
 		if (!displayCheck || displayCheck === "full" || displayCheck === "full-native" || displayCheck === "legacy-full") {
@@ -991,6 +460,71 @@
 		if (matches.call(node, focusableCandidateSelector) === false) return false;
 		return isNodeMatchingSelectorFocusable(options, node);
 	};
+	function _arrayLikeToArray(r, a) {
+		(null == a || a > r.length) && (a = r.length);
+		for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+		return n;
+	}
+	function _arrayWithoutHoles(r) {
+		if (Array.isArray(r)) return _arrayLikeToArray(r);
+	}
+	function _createForOfIteratorHelper(r, e) {
+		var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+		if (!t) {
+			if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e) {
+				t && (r = t);
+				var n = 0, F = function() {};
+				return {
+					s: F,
+					n: function() {
+						return n >= r.length ? { done: true } : {
+							done: false,
+							value: r[n++]
+						};
+					},
+					e: function(r) {
+						throw r;
+					},
+					f: F
+				};
+			}
+			throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+		}
+		var o, a = true, u = false;
+		return {
+			s: function() {
+				t = t.call(r);
+			},
+			n: function() {
+				var r = t.next();
+				return a = r.done, r;
+			},
+			e: function(r) {
+				u = true, o = r;
+			},
+			f: function() {
+				try {
+					a || null == t.return || t.return();
+				} finally {
+					if (u) throw o;
+				}
+			}
+		};
+	}
+	function _defineProperty(e, r, t) {
+		return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+			value: t,
+			enumerable: true,
+			configurable: true,
+			writable: true
+		}) : e[r] = t, e;
+	}
+	function _iterableToArray(r) {
+		if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r);
+	}
+	function _nonIterableSpread() {
+		throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+	}
 	function ownKeys(e, r) {
 		var t = Object.keys(e);
 		if (Object.getOwnPropertySymbols) {
@@ -1004,7 +538,7 @@
 	function _objectSpread2(e) {
 		for (var r = 1; r < arguments.length; r++) {
 			var t = null != arguments[r] ? arguments[r] : {};
-			r % 2 ? ownKeys(Object(t), !0).forEach(function(r) {
+			r % 2 ? ownKeys(Object(t), true).forEach(function(r) {
 				_defineProperty(e, r, t[r]);
 			}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function(r) {
 				Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
@@ -1012,37 +546,37 @@
 		}
 		return e;
 	}
-	function _defineProperty(obj, key, value) {
-		key = _toPropertyKey(key);
-		if (key in obj) Object.defineProperty(obj, key, {
-			value,
-			enumerable: true,
-			configurable: true,
-			writable: true
-		});
-		else obj[key] = value;
-		return obj;
+	function _toConsumableArray(r) {
+		return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
 	}
-	function _toPrimitive(input, hint) {
-		if (typeof input !== "object" || input === null) return input;
-		var prim = input[Symbol.toPrimitive];
-		if (prim !== void 0) {
-			var res = prim.call(input, hint || "default");
-			if (typeof res !== "object") return res;
+	function _toPrimitive(t, r) {
+		if ("object" != typeof t || !t) return t;
+		var e = t[Symbol.toPrimitive];
+		if (void 0 !== e) {
+			var i = e.call(t, r);
+			if ("object" != typeof i) return i;
 			throw new TypeError("@@toPrimitive must return a primitive value.");
 		}
-		return (hint === "string" ? String : Number)(input);
+		return ("string" === r ? String : Number)(t);
 	}
-	function _toPropertyKey(arg) {
-		var key = _toPrimitive(arg, "string");
-		return typeof key === "symbol" ? key : String(key);
+	function _toPropertyKey(t) {
+		var i = _toPrimitive(t, "string");
+		return "symbol" == typeof i ? i : i + "";
+	}
+	function _unsupportedIterableToArray(r, a) {
+		if (r) {
+			if ("string" == typeof r) return _arrayLikeToArray(r, a);
+			var t = {}.toString.call(r).slice(8, -1);
+			return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+		}
 	}
 	var activeFocusTraps = {
+		getActiveTrap: function getActiveTrap(trapStack) {
+			if ((trapStack === null || trapStack === void 0 ? void 0 : trapStack.length) > 0) return trapStack[trapStack.length - 1];
+			return null;
+		},
 		activateTrap: function activateTrap(trapStack, trap) {
-			if (trapStack.length > 0) {
-				var activeTrap = trapStack[trapStack.length - 1];
-				if (activeTrap !== trap) activeTrap.pause();
-			}
+			if (trap !== activeFocusTraps.getActiveTrap(trapStack)) activeFocusTraps.pauseTrap(trapStack);
 			var trapIndex = trapStack.indexOf(trap);
 			if (trapIndex === -1) trapStack.push(trap);
 			else {
@@ -1053,7 +587,15 @@
 		deactivateTrap: function deactivateTrap(trapStack, trap) {
 			var trapIndex = trapStack.indexOf(trap);
 			if (trapIndex !== -1) trapStack.splice(trapIndex, 1);
-			if (trapStack.length > 0) trapStack[trapStack.length - 1].unpause();
+			activeFocusTraps.unpauseTrap(trapStack);
+		},
+		pauseTrap: function pauseTrap(trapStack) {
+			var activeTrap = activeFocusTraps.getActiveTrap(trapStack);
+			activeTrap === null || activeTrap === void 0 || activeTrap._setPausedState(true);
+		},
+		unpauseTrap: function unpauseTrap(trapStack) {
+			var activeTrap = activeFocusTraps.getActiveTrap(trapStack);
+			if (activeTrap && !activeTrap._isManuallyPaused()) activeTrap._setPausedState(false);
 		}
 	};
 	var isSelectableInput = function isSelectableInput(node) {
@@ -1074,17 +616,6 @@
 	var delay$1 = function delay(fn) {
 		return setTimeout(fn, 0);
 	};
-	var findIndex = function findIndex(arr, fn) {
-		var idx = -1;
-		arr.every(function(value, i) {
-			if (fn(value)) {
-				idx = i;
-				return false;
-			}
-			return true;
-		});
-		return idx;
-	};
 	var valueOrHandler = function valueOrHandler(value) {
 		for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) params[_key - 1] = arguments[_key];
 		return typeof value === "function" ? value.apply(void 0, params) : value;
@@ -1100,6 +631,7 @@
 			returnFocusOnDeactivate: true,
 			escapeDeactivates: true,
 			delayInitialFocus: true,
+			isolateSubtrees: false,
 			isKeyForward,
 			isKeyBackward
 		}, userOptions);
@@ -1107,10 +639,13 @@
 			containers: [],
 			containerGroups: [],
 			tabbableGroups: [],
+			adjacentElements: new Set(),
+			alreadySilent: new Set(),
 			nodeFocusedBeforeActivation: null,
 			mostRecentlyFocusedNode: null,
 			active: false,
 			paused: false,
+			manuallyPaused: false,
 			delayInitialFocusTimer: void 0,
 			recentNavEvent: void 0
 		};
@@ -1128,11 +663,9 @@
 			});
 		};
 		var getNodeForOption = function getNodeForOption(optionName) {
+			var _ref2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _ref2$hasFallback = _ref2.hasFallback, hasFallback = _ref2$hasFallback === void 0 ? false : _ref2$hasFallback, _ref2$params = _ref2.params, params = _ref2$params === void 0 ? [] : _ref2$params;
 			var optionValue = config[optionName];
-			if (typeof optionValue === "function") {
-				for (var _len2 = arguments.length, params = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) params[_key2 - 1] = arguments[_key2];
-				optionValue = optionValue.apply(void 0, params);
-			}
+			if (typeof optionValue === "function") optionValue = optionValue.apply(void 0, _toConsumableArray(params));
 			if (optionValue === true) optionValue = void 0;
 			if (!optionValue) {
 				if (optionValue === void 0 || optionValue === false) return optionValue;
@@ -1140,19 +673,27 @@
 			}
 			var node = optionValue;
 			if (typeof optionValue === "string") {
-				node = doc.querySelector(optionValue);
-				if (!node) throw new Error("`".concat(optionName, "` as selector refers to no known node"));
+				try {
+					node = doc.querySelector(optionValue);
+				} catch (err) {
+					throw new Error("`".concat(optionName, "` appears to be an invalid selector; error=\"").concat(err.message, "\""));
+				}
+				if (!node) {
+					if (!hasFallback) throw new Error("`".concat(optionName, "` as selector refers to no known node"));
+				}
 			}
 			return node;
 		};
 		var getInitialFocusNode = function getInitialFocusNode() {
-			var node = getNodeForOption("initialFocus");
+			var node = getNodeForOption("initialFocus", { hasFallback: true });
 			if (node === false) return false;
-			if (node === void 0 || !isFocusable(node, config.tabbableOptions)) if (findContainerIndex(doc.activeElement) >= 0) node = doc.activeElement;
-			else {
-				var firstTabbableGroup = state.tabbableGroups[0];
-				node = firstTabbableGroup && firstTabbableGroup.firstTabbableNode || getNodeForOption("fallbackFocus");
-			}
+			if (node === void 0 || node && !isFocusable(node, config.tabbableOptions)) {
+				if (findContainerIndex(doc.activeElement) >= 0) node = doc.activeElement;
+				else {
+					var firstTabbableGroup = state.tabbableGroups[0];
+					node = firstTabbableGroup && firstTabbableGroup.firstTabbableNode || getNodeForOption("fallbackFocus");
+				}
+			} else if (node === null) node = getNodeForOption("fallbackFocus");
 			if (!node) throw new Error("Your focus-trap needs to have at least one focusable element");
 			return node;
 		};
@@ -1202,17 +743,17 @@
 				return g.posTabIndexesFound;
 			}) && state.containerGroups.length > 1) throw new Error("At least one node with a positive tabindex was found in one of your focus-trap's multiple containers. Positive tabindexes are only supported in single-container focus-traps.");
 		};
-		var getActiveElement = function getActiveElement(el) {
+		var _getActiveElement = function getActiveElement(el) {
 			var activeElement = el.activeElement;
 			if (!activeElement) return;
-			if (activeElement.shadowRoot && activeElement.shadowRoot.activeElement !== null) return getActiveElement(activeElement.shadowRoot);
+			if (activeElement.shadowRoot && activeElement.shadowRoot.activeElement !== null) return _getActiveElement(activeElement.shadowRoot);
 			return activeElement;
 		};
-		var tryFocus = function tryFocus(node) {
+		var _tryFocus = function tryFocus(node) {
 			if (node === false) return;
-			if (node === getActiveElement(document)) return;
+			if (node === _getActiveElement(document)) return;
 			if (!node || !node.focus) {
-				tryFocus(getInitialFocusNode());
+				_tryFocus(getInitialFocusNode());
 				return;
 			}
 			node.focus({ preventScroll: !!config.preventScroll });
@@ -1220,22 +761,23 @@
 			if (isSelectableInput(node)) node.select();
 		};
 		var getReturnFocusNode = function getReturnFocusNode(previousActiveElement) {
-			var node = getNodeForOption("setReturnFocus", previousActiveElement);
+			var node = getNodeForOption("setReturnFocus", { params: [previousActiveElement] });
 			return node ? node : node === false ? false : previousActiveElement;
 		};
-		var findNextNavNode = function findNextNavNode(_ref2) {
-			var target = _ref2.target, event = _ref2.event, _ref2$isBackward = _ref2.isBackward, isBackward = _ref2$isBackward === void 0 ? false : _ref2$isBackward;
+		var findNextNavNode = function findNextNavNode(_ref3) {
+			var target = _ref3.target, event = _ref3.event, _ref3$isBackward = _ref3.isBackward, isBackward = _ref3$isBackward === void 0 ? false : _ref3$isBackward;
 			target = target || getActualTarget(event);
 			updateTabbableNodes();
 			var destinationNode = null;
 			if (state.tabbableGroups.length > 0) {
 				var containerIndex = findContainerIndex(target, event);
 				var containerGroup = containerIndex >= 0 ? state.containerGroups[containerIndex] : void 0;
-				if (containerIndex < 0) if (isBackward) destinationNode = state.tabbableGroups[state.tabbableGroups.length - 1].lastTabbableNode;
-				else destinationNode = state.tabbableGroups[0].firstTabbableNode;
-				else if (isBackward) {
-					var startOfGroupIndex = findIndex(state.tabbableGroups, function(_ref3) {
-						var firstTabbableNode = _ref3.firstTabbableNode;
+				if (containerIndex < 0) {
+					if (isBackward) destinationNode = state.tabbableGroups[state.tabbableGroups.length - 1].lastTabbableNode;
+					else destinationNode = state.tabbableGroups[0].firstTabbableNode;
+				} else if (isBackward) {
+					var startOfGroupIndex = state.tabbableGroups.findIndex(function(_ref4) {
+						var firstTabbableNode = _ref4.firstTabbableNode;
 						return target === firstTabbableNode;
 					});
 					if (startOfGroupIndex < 0 && (containerGroup.container === target || isFocusable(target, config.tabbableOptions) && !isTabbable(target, config.tabbableOptions) && !containerGroup.nextTabbableNode(target, false))) startOfGroupIndex = containerIndex;
@@ -1245,8 +787,8 @@
 						destinationNode = getTabIndex(target) >= 0 ? destinationGroup.lastTabbableNode : destinationGroup.lastDomTabbableNode;
 					} else if (!isTabEvent(event)) destinationNode = containerGroup.nextTabbableNode(target, false);
 				} else {
-					var lastOfGroupIndex = findIndex(state.tabbableGroups, function(_ref4) {
-						var lastTabbableNode = _ref4.lastTabbableNode;
+					var lastOfGroupIndex = state.tabbableGroups.findIndex(function(_ref5) {
+						var lastTabbableNode = _ref5.lastTabbableNode;
 						return target === lastTabbableNode;
 					});
 					if (lastOfGroupIndex < 0 && (containerGroup.container === target || isFocusable(target, config.tabbableOptions) && !isTabbable(target, config.tabbableOptions) && !containerGroup.nextTabbableNode(target))) lastOfGroupIndex = containerIndex;
@@ -1307,8 +849,8 @@
 					target: state.mostRecentlyFocusedNode,
 					isBackward: config.isKeyBackward(state.recentNavEvent)
 				});
-				if (nextNode) tryFocus(nextNode);
-				else tryFocus(state.mostRecentlyFocusedNode || getInitialFocusNode());
+				if (nextNode) _tryFocus(nextNode);
+				else _tryFocus(state.mostRecentlyFocusedNode || getInitialFocusNode());
 			}
 			state.recentNavEvent = void 0;
 		};
@@ -1321,16 +863,17 @@
 			});
 			if (destinationNode) {
 				if (isTabEvent(event)) event.preventDefault();
-				tryFocus(destinationNode);
+				_tryFocus(destinationNode);
 			}
 		};
-		var checkKey = function checkKey(event) {
+		var checkTabKey = function checkTabKey(event) {
+			if (config.isKeyForward(event) || config.isKeyBackward(event)) checkKeyNav(event, config.isKeyBackward(event));
+		};
+		var checkEscapeKey = function checkEscapeKey(event) {
 			if (isEscapeEvent(event) && valueOrHandler(config.escapeDeactivates, event) !== false) {
 				event.preventDefault();
 				trap.deactivate();
-				return;
 			}
-			if (config.isKeyForward(event) || config.isKeyBackward(event)) checkKeyNav(event, config.isKeyBackward(event));
 		};
 		var checkClick = function checkClick(e) {
 			if (findContainerIndex(getActualTarget(e), e) >= 0) return;
@@ -1343,8 +886,8 @@
 			if (!state.active) return;
 			activeFocusTraps.activateTrap(trapStack, trap);
 			state.delayInitialFocusTimer = config.delayInitialFocus ? delay$1(function() {
-				tryFocus(getInitialFocusNode());
-			}) : tryFocus(getInitialFocusNode());
+				_tryFocus(getInitialFocusNode());
+			}) : _tryFocus(getInitialFocusNode());
 			doc.addEventListener("focusin", checkFocusIn, true);
 			doc.addEventListener("mousedown", checkPointerDown, {
 				capture: true,
@@ -1358,11 +901,59 @@
 				capture: true,
 				passive: false
 			});
-			doc.addEventListener("keydown", checkKey, {
+			doc.addEventListener("keydown", checkTabKey, {
 				capture: true,
 				passive: false
 			});
+			doc.addEventListener("keydown", checkEscapeKey);
 			return trap;
+		};
+		var collectAdjacentElements = function collectAdjacentElements(containers) {
+			if (state.active && !state.paused) trap._setSubtreeIsolation(false);
+			state.adjacentElements.clear();
+			state.alreadySilent.clear();
+			var containerAncestors = new Set();
+			var adjacentElements = new Set();
+			var _iterator = _createForOfIteratorHelper(containers), _step;
+			try {
+				for (_iterator.s(); !(_step = _iterator.n()).done;) {
+					var container = _step.value;
+					containerAncestors.add(container);
+					var insideShadowRoot = typeof ShadowRoot !== "undefined" && container.getRootNode() instanceof ShadowRoot;
+					var current = container;
+					while (current) {
+						containerAncestors.add(current);
+						var parent = current.parentElement;
+						var siblings = [];
+						if (parent) siblings = parent.children;
+						else if (!parent && insideShadowRoot) {
+							siblings = current.getRootNode().children;
+							parent = current.getRootNode().host;
+							insideShadowRoot = typeof ShadowRoot !== "undefined" && parent.getRootNode() instanceof ShadowRoot;
+						}
+						var _iterator2 = _createForOfIteratorHelper(siblings), _step2;
+						try {
+							for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+								var child = _step2.value;
+								adjacentElements.add(child);
+							}
+						} catch (err) {
+							_iterator2.e(err);
+						} finally {
+							_iterator2.f();
+						}
+						current = parent;
+					}
+				}
+			} catch (err) {
+				_iterator.e(err);
+			} finally {
+				_iterator.f();
+			}
+			containerAncestors.forEach(function(el) {
+				adjacentElements["delete"](el);
+			});
+			state.adjacentElements = adjacentElements;
 		};
 		var removeListeners = function removeListeners() {
 			if (!state.active) return;
@@ -1370,7 +961,8 @@
 			doc.removeEventListener("mousedown", checkPointerDown, true);
 			doc.removeEventListener("touchstart", checkPointerDown, true);
 			doc.removeEventListener("click", checkClick, true);
-			doc.removeEventListener("keydown", checkKey, true);
+			doc.removeEventListener("keydown", checkTabKey, true);
+			doc.removeEventListener("keydown", checkEscapeKey);
 			return trap;
 		};
 		var mutationObserver = typeof window !== "undefined" && "MutationObserver" in window ? new MutationObserver(function checkDomRemoval(mutations) {
@@ -1378,7 +970,7 @@
 				return Array.from(mutation.removedNodes).some(function(node) {
 					return node === state.mostRecentlyFocusedNode;
 				});
-			})) tryFocus(getInitialFocusNode());
+			})) _tryFocus(getInitialFocusNode());
 		}) : void 0;
 		var updateObservedNodes = function updateObservedNodes() {
 			if (!mutationObserver) return;
@@ -1402,22 +994,38 @@
 				var onActivate = getOption(activateOptions, "onActivate");
 				var onPostActivate = getOption(activateOptions, "onPostActivate");
 				var checkCanFocusTrap = getOption(activateOptions, "checkCanFocusTrap");
-				if (!checkCanFocusTrap) updateTabbableNodes();
-				state.active = true;
-				state.paused = false;
-				state.nodeFocusedBeforeActivation = doc.activeElement;
-				onActivate === null || onActivate === void 0 || onActivate();
-				var finishActivation = function finishActivation() {
-					if (checkCanFocusTrap) updateTabbableNodes();
-					addListeners();
-					updateObservedNodes();
-					onPostActivate === null || onPostActivate === void 0 || onPostActivate();
-				};
-				if (checkCanFocusTrap) {
-					checkCanFocusTrap(state.containers.concat()).then(finishActivation, finishActivation);
-					return this;
+				var preexistingTrap = activeFocusTraps.getActiveTrap(trapStack);
+				var revertState = false;
+				if (preexistingTrap && !preexistingTrap.paused) {
+					var _preexistingTrap$_set;
+					(_preexistingTrap$_set = preexistingTrap._setSubtreeIsolation) === null || _preexistingTrap$_set === void 0 || _preexistingTrap$_set.call(preexistingTrap, false);
+					revertState = true;
 				}
-				finishActivation();
+				try {
+					if (!checkCanFocusTrap) updateTabbableNodes();
+					state.active = true;
+					state.paused = false;
+					state.nodeFocusedBeforeActivation = _getActiveElement(doc);
+					onActivate === null || onActivate === void 0 || onActivate();
+					var finishActivation = function finishActivation() {
+						if (checkCanFocusTrap) updateTabbableNodes();
+						addListeners();
+						updateObservedNodes();
+						if (config.isolateSubtrees) trap._setSubtreeIsolation(true);
+						onPostActivate === null || onPostActivate === void 0 || onPostActivate();
+					};
+					if (checkCanFocusTrap) {
+						checkCanFocusTrap(state.containers.concat()).then(finishActivation, finishActivation);
+						return this;
+					}
+					finishActivation();
+				} catch (error) {
+					if (preexistingTrap === activeFocusTraps.getActiveTrap(trapStack) && revertState) {
+						var _preexistingTrap$_set2;
+						(_preexistingTrap$_set2 = preexistingTrap._setSubtreeIsolation) === null || _preexistingTrap$_set2 === void 0 || _preexistingTrap$_set2.call(preexistingTrap, true);
+					}
+					throw error;
+				}
 				return this;
 			},
 			deactivate: function deactivate(deactivateOptions) {
@@ -1429,6 +1037,8 @@
 				}, deactivateOptions);
 				clearTimeout(state.delayInitialFocusTimer);
 				state.delayInitialFocusTimer = void 0;
+				if (!state.paused) trap._setSubtreeIsolation(false);
+				state.alreadySilent.clear();
 				removeListeners();
 				state.active = false;
 				state.paused = false;
@@ -1441,7 +1051,7 @@
 				onDeactivate === null || onDeactivate === void 0 || onDeactivate();
 				var finishDeactivation = function finishDeactivation() {
 					delay$1(function() {
-						if (returnFocus) tryFocus(getReturnFocusNode(state.nodeFocusedBeforeActivation));
+						if (returnFocus) _tryFocus(getReturnFocusNode(state.nodeFocusedBeforeActivation));
 						onPostDeactivate === null || onPostDeactivate === void 0 || onPostDeactivate();
 					});
 				};
@@ -1453,37 +1063,78 @@
 				return this;
 			},
 			pause: function pause(pauseOptions) {
-				if (state.paused || !state.active) return this;
-				var onPause = getOption(pauseOptions, "onPause");
-				var onPostPause = getOption(pauseOptions, "onPostPause");
-				state.paused = true;
-				onPause === null || onPause === void 0 || onPause();
-				removeListeners();
-				updateObservedNodes();
-				onPostPause === null || onPostPause === void 0 || onPostPause();
-				return this;
+				if (!state.active) return this;
+				state.manuallyPaused = true;
+				return this._setPausedState(true, pauseOptions);
 			},
 			unpause: function unpause(unpauseOptions) {
-				if (!state.paused || !state.active) return this;
-				var onUnpause = getOption(unpauseOptions, "onUnpause");
-				var onPostUnpause = getOption(unpauseOptions, "onPostUnpause");
-				state.paused = false;
-				onUnpause === null || onUnpause === void 0 || onUnpause();
-				updateTabbableNodes();
-				addListeners();
-				updateObservedNodes();
-				onPostUnpause === null || onPostUnpause === void 0 || onPostUnpause();
-				return this;
+				if (!state.active) return this;
+				state.manuallyPaused = false;
+				if (trapStack[trapStack.length - 1] !== this) return this;
+				return this._setPausedState(false, unpauseOptions);
 			},
 			updateContainerElements: function updateContainerElements(containerElements) {
 				state.containers = [].concat(containerElements).filter(Boolean).map(function(element) {
 					return typeof element === "string" ? doc.querySelector(element) : element;
 				});
-				if (state.active) updateTabbableNodes();
+				if (config.isolateSubtrees) collectAdjacentElements(state.containers);
+				if (state.active) {
+					updateTabbableNodes();
+					if (config.isolateSubtrees && !state.paused) trap._setSubtreeIsolation(true);
+				}
 				updateObservedNodes();
 				return this;
 			}
 		};
+		Object.defineProperties(trap, {
+			_isManuallyPaused: { value: function value() {
+				return state.manuallyPaused;
+			} },
+			_setPausedState: { value: function value(paused, options) {
+				if (state.paused === paused) return this;
+				state.paused = paused;
+				if (paused) {
+					var onPause = getOption(options, "onPause");
+					var onPostPause = getOption(options, "onPostPause");
+					onPause === null || onPause === void 0 || onPause();
+					removeListeners();
+					updateObservedNodes();
+					trap._setSubtreeIsolation(false);
+					onPostPause === null || onPostPause === void 0 || onPostPause();
+				} else {
+					var onUnpause = getOption(options, "onUnpause");
+					var onPostUnpause = getOption(options, "onPostUnpause");
+					onUnpause === null || onUnpause === void 0 || onUnpause();
+					trap._setSubtreeIsolation(true);
+					updateTabbableNodes();
+					addListeners();
+					updateObservedNodes();
+					onPostUnpause === null || onPostUnpause === void 0 || onPostUnpause();
+				}
+				return this;
+			} },
+			_setSubtreeIsolation: { value: function value(isEnabled) {
+				if (config.isolateSubtrees) state.adjacentElements.forEach(function(el) {
+					var _el$getAttribute;
+					if (isEnabled) switch (config.isolateSubtrees) {
+						case "aria-hidden":
+							if (el.ariaHidden === "true" || ((_el$getAttribute = el.getAttribute("aria-hidden")) === null || _el$getAttribute === void 0 ? void 0 : _el$getAttribute.toLowerCase()) === "true") state.alreadySilent.add(el);
+							el.setAttribute("aria-hidden", "true");
+							break;
+						default:
+							if (el.inert || el.hasAttribute("inert")) state.alreadySilent.add(el);
+							el.setAttribute("inert", true);
+					}
+					else if (state.alreadySilent.has(el));
+					else switch (config.isolateSubtrees) {
+						case "aria-hidden":
+							el.removeAttribute("aria-hidden");
+							break;
+						default: el.removeAttribute("inert");
+					}
+				});
+			} }
+		});
 		trap.updateContainerElements(elements);
 		return trap;
 	};
@@ -1506,7 +1157,7 @@
 				isPaused.value = false;
 			}
 		};
-		(0, lib_exports.watch)(() => unrefElement(target), (el) => {
+		(0, lib_exports.watch)(() => unrefElement$1(target), (el) => {
 			if (!el) return;
 			trap = createFocusTrap(el, {
 				...focusTrapOptions,
@@ -1521,7 +1172,7 @@
 			});
 			if (immediate) activate();
 		}, { flush: "post" });
-		tryOnScopeDispose(() => deactivate());
+		tryOnScopeDispose$1(() => deactivate());
 		return {
 			hasFocus,
 			isPaused,
@@ -1533,11 +1184,12 @@
 	}
 	var uo = (e) => (...o) => {
 		e && (e?.(...o), e = null);
-	}, q = () => {};
+	};
+	var q = () => {};
 	function oe(e, o, l) {
 		return e > l ? l : e < o ? o : e;
 	}
-	function fe(e, o) {
+	function ve(e, o) {
 		var s;
 		const l = ((s = $(e, o)) == null ? void 0 : s[0]) || o;
 		e.push(l);
@@ -1705,8 +1357,8 @@
 		} : {
 			appear: !0,
 			...e.overlayTransition
-		});
-		(0, vue.watch)((0, vue.computed)(() => (e.hideOverlay || M.value === 2) && r.value === 2), (k) => {
+		}), E = (0, vue.computed)(() => (e.hideOverlay || M.value === 2) && r.value === 2);
+		(0, vue.watch)(E, (k) => {
 			k && (n.value = !1);
 		}), (0, vue.watch)(r, (k) => {
 			if (k === 1) {
@@ -1799,27 +1451,38 @@
 		window.addEventListener("testPassive", null, e), window.removeEventListener("testPassive", null, e);
 	}
 	var He = typeof window < "u" && window.navigator && window.navigator.platform && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-	var j = [], le = !1, ne = 0, je = -1, W, X;
+	var j = [];
+	var le = !1;
+	var ne = 0;
+	var je = -1;
+	var W;
+	var X;
 	var ho = (e) => {
 		if (!e || e.nodeType !== Node.ELEMENT_NODE) return !1;
 		const o = window.getComputedStyle(e);
 		return ["auto", "scroll"].includes(o.overflowY) && e.scrollHeight > e.clientHeight;
-	}, mo = (e, o) => !(e.scrollTop === 0 && o < 0 || e.scrollTop + e.clientHeight + o >= e.scrollHeight && o > 0), wo = (e) => {
+	};
+	var mo = (e, o) => !(e.scrollTop === 0 && o < 0 || e.scrollTop + e.clientHeight + o >= e.scrollHeight && o > 0);
+	var wo = (e) => {
 		const o = [];
 		for (; e;) {
 			if (o.push(e), e.classList.contains("vfm")) return o;
 			e = e.parentElement;
 		}
 		return o;
-	}, bo = (e, o) => {
+	};
+	var bo = (e, o) => {
 		let l = !1;
 		return wo(e).forEach((u) => {
 			ho(u) && mo(u, o) && (l = !0);
 		}), l;
-	}, Ne = (e) => j.some(() => bo(e, -ne)), se = (e) => {
+	};
+	var Ne = (e) => j.some(() => bo(e, -ne));
+	var se = (e) => {
 		const o = e || window.event;
 		return Ne(o.target) || o.touches.length > 1 ? !0 : (o.preventDefault && o.preventDefault(), !1);
-	}, To = (e) => {
+	};
+	var To = (e) => {
 		if (X === void 0) {
 			const o = !!e && e.reserveScrollBarGap === !0, l = window.innerWidth - document.documentElement.clientWidth;
 			if (o && l > 0) {
@@ -1828,9 +1491,13 @@
 			}
 		}
 		W === void 0 && (W = document.body.style.overflow, document.body.style.overflow = "hidden");
-	}, So = () => {
+	};
+	var So = () => {
 		X !== void 0 && (document.body.style.paddingRight = X, X = void 0), W !== void 0 && (document.body.style.overflow = W, W = void 0);
-	}, Mo = (e) => e ? e.scrollHeight - e.scrollTop <= e.clientHeight : !1, go = (e, o) => (ne = e.targetTouches[0].clientY - je, Ne(e.target) ? !1 : o && o.scrollTop === 0 && ne > 0 || Mo(o) && ne < 0 ? se(e) : (e.stopPropagation(), !0)), Co = (e, o) => {
+	};
+	var Mo = (e) => e ? e.scrollHeight - e.scrollTop <= e.clientHeight : !1;
+	var go = (e, o) => (ne = e.targetTouches[0].clientY - je, Ne(e.target) ? !1 : o && o.scrollTop === 0 && ne > 0 || Mo(o) && ne < 0 ? se(e) : (e.stopPropagation(), !0));
+	var Co = (e, o) => {
 		if (!e) {
 			console.error("disableBodyScroll unsuccessful - targetElement must be provided when calling disableBodyScroll on IOS devices.");
 			return;
@@ -1845,7 +1512,8 @@
 		}, e.ontouchmove = (s) => {
 			s.targetTouches.length === 1 && go(s, e);
 		}, le || (document.addEventListener("touchmove", se, be ? { passive: !1 } : void 0), le = !0)) : To(o);
-	}, ko = (e) => {
+	};
+	var ko = (e) => {
 		if (!e) {
 			console.error("enableBodyScroll unsuccessful - targetElement must be provided when calling enableBodyScroll on IOS devices.");
 			return;
@@ -1897,7 +1565,7 @@
 			resetZIndex: s
 		};
 	}
-	var ve = {
+	var pe = {
 		beforeMount(e, { value: o }, { transition: l }) {
 			e._vov = e.style.visibility === "hidden" ? "" : e.style.visibility, l && o ? l.beforeEnter(e) : G(e, o);
 		},
@@ -1955,11 +1623,11 @@
 			w.capture && !w.passive && p.preventDefault();
 			const { x: h, y: R } = De(p);
 			O(h, R), E(h, R), l?.(p), D = [
-				useEventListener(e, "mousemove", P, w),
-				useEventListener(e, "touchmove", P, w),
-				useEventListener(e, "mouseup", i, w),
-				useEventListener(e, "touchend", i, w),
-				useEventListener(e, "touchcancel", i, w)
+				useEventListener$1(e, "mousemove", P, w),
+				useEventListener$1(e, "touchmove", P, w),
+				useEventListener$1(e, "mouseup", i, w),
+				useEventListener$1(e, "touchend", i, w),
+				useEventListener$1(e, "touchcancel", i, w)
 			];
 		}
 		function P(p) {
@@ -1975,7 +1643,7 @@
 			c ? w = p ? { passive: !0 } : { capture: !1 } : w = p ? {
 				passive: !1,
 				capture: !0
-			} : { capture: !0 }, b = [useEventListener(e, "mousedown", k, w), useEventListener(e, "touchstart", k, w)];
+			} : { capture: !0 }, b = [useEventListener$1(e, "mousedown", k, w), useEventListener$1(e, "touchstart", k, w)];
 		}), {
 			isSwiping: S,
 			direction: V,
@@ -1996,7 +1664,7 @@
 		const { lengthX: V, lengthY: O, direction: E, isSwiping: w } = Oo(n, {
 			threshold: e.threshold,
 			onSwipeStart(i) {
-				m = useEventListener(document, "selectionchange", () => {
+				m = useEventListener$1(document, "selectionchange", () => {
 					var b;
 					r.value = (b = window.getSelection()) == null ? void 0 : b.isCollapsed;
 				}), M = new Date().getTime(), S = P(i == null ? void 0 : i.target);
@@ -2004,10 +1672,19 @@
 			onSwipe() {
 				var i, b, L, p;
 				if (S && r.value && E.value === e.swipeToClose) {
-					if (E.value === "up") t.value = oe(Math.abs(O.value || 0), 0, ((i = n.value) == null ? void 0 : i.offsetHeight) || 0) - (e.threshold || 0);
-					else if (E.value === "down") t.value = -(oe(Math.abs(O.value || 0), 0, ((b = n.value) == null ? void 0 : b.offsetHeight) || 0) - (e.threshold || 0));
-					else if (E.value === "right") t.value = -(oe(Math.abs(V.value || 0), 0, ((L = n.value) == null ? void 0 : L.offsetWidth) || 0) - (e.threshold || 0));
-					else if (E.value === "left") t.value = oe(Math.abs(V.value || 0), 0, ((p = n.value) == null ? void 0 : p.offsetWidth) || 0) - (e.threshold || 0);
+					if (E.value === "up") {
+						const h = oe(Math.abs(O.value || 0), 0, ((i = n.value) == null ? void 0 : i.offsetHeight) || 0) - (e.threshold || 0);
+						t.value = h;
+					} else if (E.value === "down") {
+						const h = oe(Math.abs(O.value || 0), 0, ((b = n.value) == null ? void 0 : b.offsetHeight) || 0) - (e.threshold || 0);
+						t.value = -h;
+					} else if (E.value === "right") {
+						const h = oe(Math.abs(V.value || 0), 0, ((L = n.value) == null ? void 0 : L.offsetWidth) || 0) - (e.threshold || 0);
+						t.value = -h;
+					} else if (E.value === "left") {
+						const h = oe(Math.abs(V.value || 0), 0, ((p = n.value) == null ? void 0 : p.offsetWidth) || 0) - (e.threshold || 0);
+						t.value = h;
+					}
 				}
 			},
 			onSwipeEnd(i, b) {
@@ -2052,9 +1729,7 @@
 					f = i < b;
 					break;
 				case "up":
-				case "left":
-					f = i > b;
-					break;
+				case "left": f = i > b;
 			}
 		});
 		function k(i) {
@@ -2083,7 +1758,8 @@
 	}
 	var Ye = Symbol("vfm");
 	var H;
-	var Lo = (e) => H = e, Po = {
+	var Lo = (e) => H = e;
+	var Po = {
 		install: q,
 		modals: [],
 		openedModals: [],
@@ -2095,17 +1771,18 @@
 		open: () => {},
 		close: () => {},
 		closeAll: () => Promise.allSettled([])
-	}, Ao = () => (0, vue.getCurrentInstance)() && (0, vue.inject)(Ye, Po) || H;
-	function zo() {
-		const e = (0, vue.shallowReactive)([]), o = (0, vue.shallowReactive)([]), c = (0, vue.markRaw)({
+	};
+	var Ao = () => (0, vue.getCurrentInstance)() && (0, vue.inject)(Ye, Po) || H;
+	function Go() {
+		const e = (0, vue.shallowReactive)([]), o = (0, vue.shallowReactive)([]), l = (0, vue.shallowReactive)([]), s = (0, vue.shallowReactive)([]), u = (0, vue.ref)([]), c = (0, vue.markRaw)({
 			install(a) {
 				a.provide(Ye, c), a.config.globalProperties.$vfm = c;
 			},
 			modals: e,
 			openedModals: o,
-			openedModalOverlays: (0, vue.shallowReactive)([]),
-			dynamicModals: (0, vue.shallowReactive)([]),
-			modalsContainers: (0, vue.ref)([]),
+			openedModalOverlays: l,
+			dynamicModals: s,
+			modalsContainers: u,
 			get(a) {
 				return e.find((n) => {
 					var t, r;
@@ -2135,8 +1812,9 @@
 		var o;
 		return (o = e == null ? void 0 : e.exposed) == null ? void 0 : o.modalExposed;
 	}
+	var Io = (0, vue.defineComponent)({ inheritAttrs: !1 });
 	var Ro = (0, vue.defineComponent)({
-		...(0, vue.defineComponent)({ inheritAttrs: !1 }),
+		...Io,
 		__name: "VueFinalModal",
 		props: co,
 		emits: [
@@ -2181,23 +1859,23 @@
 			(0, vue.watch)([() => s.zIndexFn, Me], () => {
 				i.value && O(Me.value);
 			}), (0, vue.onMounted)(() => {
-				fe(n, a);
+				ve(n, a);
 			}), s.modelValue && (w.value = !0);
 			function We() {
 				let d = !1;
-				return u("beforeOpen", { stop: () => d = !0 }), d ? !1 : (fe(t, a), fe(r, a), ie(), Q(), !0);
+				return u("beforeOpen", { stop: () => d = !0 }), d ? !1 : (ve(t, a), ve(r, a), ae(), Q(), !0);
 			}
 			function Xe() {
 				let d = !1;
-				return u("beforeClose", { stop: () => d = !0 }), d ? !1 : ($(r, a), ie(), S(), xe(), !0);
+				return u("beforeClose", { stop: () => d = !0 }), d ? !1 : ($(r, a), ae(), S(), xe(), !0);
 			}
 			function Ze() {
 				w.value = !1;
 			}
 			(0, vue.onBeforeUnmount)(() => {
-				D(), $(n, a), $(t, a), S(), ie();
+				D(), $(n, a), $(t, a), S(), ae();
 			});
-			async function ie() {
+			async function ae() {
 				await (0, vue.nextTick)();
 				const d = r.filter((y) => {
 					var A;
@@ -2218,7 +1896,8 @@
 				toggle(d) {
 					return new Promise((y) => {
 						P = uo((A) => y(A));
-						w.value = typeof d == "boolean" ? d : !w.value;
+						const T = typeof d == "boolean" ? d : !w.value;
+						w.value = T;
 					});
 				}
 			})) }), (d, y) => ((0, vue.openBlock)(), (0, vue.createBlock)(vue.Teleport, {
@@ -2240,7 +1919,7 @@
 					class: (0, vue.normalizeClass)(["vfm__overlay vfm--overlay vfm--absolute vfm--inset vfm--prevent-none", d.overlayClass]),
 					style: (0, vue.normalizeStyle)(d.overlayStyle),
 					"aria-hidden": "true"
-				}, null, 6)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(h)], [(0, vue.unref)(ve), d.displayDirective !== "visible" || (0, vue.unref)(h)]]) : (0, vue.createCommentVNode)("", !0)]),
+				}, null, 6)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(h)], [(0, vue.unref)(pe), d.displayDirective !== "visible" || (0, vue.unref)(h)]]) : (0, vue.createCommentVNode)("", !0)]),
 				_: 1
 			}, 16)), (0, vue.createVNode)(vue.Transition, (0, vue.mergeProps)((0, vue.unref)(p), (0, vue.toHandlers)((0, vue.unref)(L))), {
 				default: (0, vue.withCtx)(() => [d.displayDirective !== "if" || (0, vue.unref)(b) ? (0, vue.withDirectives)(((0, vue.openBlock)(), (0, vue.createElementBlock)("div", (0, vue.mergeProps)({
@@ -2272,9 +1951,9 @@
 				}, null, 32), (0, vue.createElementVNode)("div", {
 					class: "vfm-swipe-banner-forward",
 					onTouchstart: y[4] || (y[4] = (T) => d.swipeToClose === "right" && T.preventDefault())
-				}, null, 32)], 32)) : (0, vue.createCommentVNode)("", !0)], 16)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(b)], [(0, vue.unref)(ve), d.displayDirective !== "visible" || (0, vue.unref)(b)]]) : (0, vue.createCommentVNode)("", !0)]),
+				}, null, 32)], 32)) : (0, vue.createCommentVNode)("", !0)], 16)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(b)], [(0, vue.unref)(pe), d.displayDirective !== "visible" || (0, vue.unref)(b)]]) : (0, vue.createCommentVNode)("", !0)]),
 				_: 3
-			}, 16)], 16)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(i)], [(0, vue.unref)(ve), d.displayDirective !== "visible" || (0, vue.unref)(i)]]) : (0, vue.createCommentVNode)("", !0)], 8, ["to", "disabled"]));
+			}, 16)], 16)), [[vue.vShow, d.displayDirective !== "show" || (0, vue.unref)(i)], [(0, vue.unref)(pe), d.displayDirective !== "visible" || (0, vue.unref)(i)]]) : (0, vue.createCommentVNode)("", !0)], 8, ["to", "disabled"]));
 		}
 	});
 	function K() {
@@ -2285,6 +1964,7 @@
 This will fail in production.`);
 		return e;
 	}
+	({ ...(0, vue.defineComponent)({ inheritAttrs: !1 }) });
 	var __defProp = Object.defineProperty;
 	var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
@@ -2307,13 +1987,13 @@ This will fail in production.`);
 	var isNonEmptyString = (value) => isString(value) && value.trim().length > 0;
 	var isNumber = (value) => typeof value === "number";
 	var isUndefined = (value) => typeof value === "undefined";
-	var isObject = (value) => typeof value === "object" && value !== null;
+	var isObject$1 = (value) => typeof value === "object" && value !== null;
 	var isJSX = (obj) => hasProp(obj, "tag") && isNonEmptyString(obj.tag);
 	var isTouchEvent = (event) => window.TouchEvent && event instanceof TouchEvent;
 	var isToastComponent = (obj) => hasProp(obj, "component") && isToastContent(obj.component);
-	var isVueComponent = (c) => isFunction(c) || isObject(c);
+	var isVueComponent = (c) => isFunction(c) || isObject$1(c);
 	var isToastContent = (obj) => !isUndefined(obj) && (isString(obj) || isVueComponent(obj) || isToastComponent(obj));
-	var isDOMRect = (obj) => isObject(obj) && [
+	var isDOMRect = (obj) => isObject$1(obj) && [
 		"height",
 		"width",
 		"right",
@@ -2321,7 +2001,7 @@ This will fail in production.`);
 		"top",
 		"bottom"
 	].every((p) => isNumber(obj[p]));
-	var hasProp = (obj, propKey) => (isObject(obj) || isFunction(obj)) && propKey in obj;
+	var hasProp = (obj, propKey) => (isObject$1(obj) || isFunction(obj)) && propKey in obj;
 	var getId = ((i) => () => i++)(0);
 	function getX(event) {
 		return isTouchEvent(event) ? event.targetTouches[0].clientX : event.clientX;
@@ -2342,8 +2022,8 @@ This will fail in production.`);
 	};
 	var normalizeToastComponent = (obj) => {
 		if (typeof obj === "string") return obj;
-		const props = hasProp(obj, "props") && isObject(obj.props) ? obj.props : {};
-		const listeners = hasProp(obj, "listeners") && isObject(obj.listeners) ? obj.listeners : {};
+		const props = hasProp(obj, "props") && isObject$1(obj.props) ? obj.props : {};
+		const listeners = hasProp(obj, "listeners") && isObject$1(obj.listeners) ? obj.listeners : {};
 		return {
 			component: getVueComponentFromObj(obj),
 			props,
@@ -2893,14 +2573,16 @@ This will fail in production.`);
 				}
 			},
 			onDragEnd() {
-				if (this.beingDragged) if (Math.abs(this.dragDelta) >= this.removalDistance) {
-					this.disableTransitions = true;
-					this.$nextTick(() => this.closeToast());
-				} else setTimeout(() => {
-					this.beingDragged = false;
-					if (isDOMRect(this.dragRect) && this.pauseOnHover && this.dragRect.bottom >= this.dragPos.y && this.dragPos.y >= this.dragRect.top && this.dragRect.left <= this.dragPos.x && this.dragPos.x <= this.dragRect.right) this.isRunning = false;
-					else this.isRunning = true;
-				});
+				if (this.beingDragged) {
+					if (Math.abs(this.dragDelta) >= this.removalDistance) {
+						this.disableTransitions = true;
+						this.$nextTick(() => this.closeToast());
+					} else setTimeout(() => {
+						this.beingDragged = false;
+						if (isDOMRect(this.dragRect) && this.pauseOnHover && this.dragRect.bottom >= this.dragPos.y && this.dragPos.y >= this.dragRect.top && this.dragRect.left <= this.dragPos.x && this.dragPos.x <= this.dragRect.right) this.isRunning = false;
+						else this.isRunning = true;
+					});
+				}
 			}
 		}
 	});
@@ -3163,14 +2845,14 @@ This will fail in production.`);
 	};
 	var src_default = VueToastificationPlugin;
 	_css(".Vue-Toastification__container{z-index:9999;box-sizing:border-box;color:#fff;pointer-events:none;flex-direction:column;width:600px;min-height:100%;padding:4px;display:flex;position:fixed}@media only screen and (width>=600px){.Vue-Toastification__container.top-left,.Vue-Toastification__container.top-right,.Vue-Toastification__container.top-center{top:1em}.Vue-Toastification__container.bottom-left,.Vue-Toastification__container.bottom-right,.Vue-Toastification__container.bottom-center{flex-direction:column-reverse;bottom:1em}.Vue-Toastification__container.top-left,.Vue-Toastification__container.bottom-left{left:1em}.Vue-Toastification__container.top-left .Vue-Toastification__toast,.Vue-Toastification__container.bottom-left .Vue-Toastification__toast{margin-right:auto}@supports not ((-moz-appearance:none)){.Vue-Toastification__container.top-left .Vue-Toastification__toast--rtl,.Vue-Toastification__container.bottom-left .Vue-Toastification__toast--rtl{margin-right:unset;margin-left:auto}}.Vue-Toastification__container.top-right,.Vue-Toastification__container.bottom-right{right:1em}.Vue-Toastification__container.top-right .Vue-Toastification__toast,.Vue-Toastification__container.bottom-right .Vue-Toastification__toast{margin-left:auto}@supports not ((-moz-appearance:none)){.Vue-Toastification__container.top-right .Vue-Toastification__toast--rtl,.Vue-Toastification__container.bottom-right .Vue-Toastification__toast--rtl{margin-left:unset;margin-right:auto}}.Vue-Toastification__container.top-center,.Vue-Toastification__container.bottom-center{margin-left:-300px;left:50%}.Vue-Toastification__container.top-center .Vue-Toastification__toast,.Vue-Toastification__container.bottom-center .Vue-Toastification__toast{margin-left:auto;margin-right:auto}}@media only screen and (width<=600px){.Vue-Toastification__container{width:100vw;margin:0;padding:0;left:0}.Vue-Toastification__container .Vue-Toastification__toast{width:100%}.Vue-Toastification__container.top-left,.Vue-Toastification__container.top-right,.Vue-Toastification__container.top-center{top:0}.Vue-Toastification__container.bottom-left,.Vue-Toastification__container.bottom-right,.Vue-Toastification__container.bottom-center{flex-direction:column-reverse;bottom:0}}.Vue-Toastification__toast{box-sizing:border-box;pointer-events:auto;direction:ltr;border-radius:8px;justify-content:space-between;min-width:326px;max-width:600px;min-height:64px;max-height:800px;margin-bottom:1rem;padding:22px 24px;font-family:Lato,Helvetica,Roboto,Arial,sans-serif;display:inline-flex;position:relative;overflow:hidden;transform:translateZ(0);box-shadow:0 1px 10px #0000001a,0 2px 15px #0000000d}.Vue-Toastification__toast--rtl{direction:rtl}.Vue-Toastification__toast--default{color:#fff;background-color:#1976d2}.Vue-Toastification__toast--info{color:#fff;background-color:#2196f3}.Vue-Toastification__toast--success{color:#fff;background-color:#4caf50}.Vue-Toastification__toast--error{color:#fff;background-color:#ff5252}.Vue-Toastification__toast--warning{color:#fff;background-color:#ffc107}@media only screen and (width<=600px){.Vue-Toastification__toast{border-radius:0;margin-bottom:.5rem}}.Vue-Toastification__toast-body{word-break:break-word;white-space:pre-wrap;flex:1;font-size:16px;line-height:24px}.Vue-Toastification__toast-component-body{flex:1}.Vue-Toastification__toast.disable-transition{animation:none!important}.Vue-Toastification__close-button{cursor:pointer;color:#fff;opacity:.3;background:0 0;border:none;outline:none;align-items:center;padding:0 0 0 10px;font-size:24px;font-weight:700;line-height:24px;transition:visibility,opacity .2s linear}.Vue-Toastification__close-button:hover,.Vue-Toastification__close-button:focus{opacity:1}.Vue-Toastification__toast:not(:hover) .Vue-Toastification__close-button.show-on-hover{opacity:0}.Vue-Toastification__toast--rtl .Vue-Toastification__close-button{padding-left:unset;padding-right:10px}@keyframes scale-x-frames{0%{transform:scaleX(1)}to{transform:scaleX(0)}}.Vue-Toastification__progress-bar{z-index:10000;transform-origin:0;background-color:#ffffffb3;width:100%;height:5px;animation:linear forwards scale-x-frames;position:absolute;bottom:0;left:0}.Vue-Toastification__toast--rtl .Vue-Toastification__progress-bar{right:0;left:unset;transform-origin:100%}.Vue-Toastification__icon{background:0 0;border:none;outline:none;align-items:center;width:20px;height:100%;margin:auto 18px auto 0;padding:0;transition:all .3s}.Vue-Toastification__toast--rtl .Vue-Toastification__icon{margin:auto 0 auto 18px}@keyframes bounceInRight{0%,60%,75%,90%,to{animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{opacity:0;transform:translate(3000px)}60%{opacity:1;transform:translate(-25px)}75%{transform:translate(10px)}90%{transform:translate(-5px)}to{transform:none}}@keyframes bounceOutRight{40%{opacity:1;transform:translate(-20px)}to{opacity:0;transform:translate(1000px)}}@keyframes bounceInLeft{0%,60%,75%,90%,to{animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{opacity:0;transform:translate(-3000px)}60%{opacity:1;transform:translate(25px)}75%{transform:translate(-10px)}90%{transform:translate(5px)}to{transform:none}}@keyframes bounceOutLeft{20%{opacity:1;transform:translate(20px)}to{opacity:0;transform:translate(-2000px)}}@keyframes bounceInUp{0%,60%,75%,90%,to{animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{opacity:0;transform:translateY(3000px)}60%{opacity:1;transform:translateY(-20px)}75%{transform:translateY(10px)}90%{transform:translateY(-5px)}to{transform:translate(0,0)}}@keyframes bounceOutUp{20%{transform:translateY(-10px)}40%,45%{opacity:1;transform:translateY(20px)}to{opacity:0;transform:translateY(-2000px)}}@keyframes bounceInDown{0%,60%,75%,90%,to{animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{opacity:0;transform:translateY(-3000px)}60%{opacity:1;transform:translateY(25px)}75%{transform:translateY(-10px)}90%{transform:translateY(5px)}to{transform:none}}@keyframes bounceOutDown{20%{transform:translateY(10px)}40%,45%{opacity:1;transform:translateY(-20px)}to{opacity:0;transform:translateY(2000px)}}.Vue-Toastification__bounce-enter-active.top-left,.Vue-Toastification__bounce-enter-active.bottom-left{animation-name:bounceInLeft}.Vue-Toastification__bounce-enter-active.top-right,.Vue-Toastification__bounce-enter-active.bottom-right{animation-name:bounceInRight}.Vue-Toastification__bounce-enter-active.top-center{animation-name:bounceInDown}.Vue-Toastification__bounce-enter-active.bottom-center{animation-name:bounceInUp}.Vue-Toastification__bounce-leave-active:not(.disable-transition).top-left,.Vue-Toastification__bounce-leave-active:not(.disable-transition).bottom-left{animation-name:bounceOutLeft}.Vue-Toastification__bounce-leave-active:not(.disable-transition).top-right,.Vue-Toastification__bounce-leave-active:not(.disable-transition).bottom-right{animation-name:bounceOutRight}.Vue-Toastification__bounce-leave-active:not(.disable-transition).top-center{animation-name:bounceOutUp}.Vue-Toastification__bounce-leave-active:not(.disable-transition).bottom-center{animation-name:bounceOutDown}.Vue-Toastification__bounce-leave-active,.Vue-Toastification__bounce-enter-active{animation-duration:.75s;animation-fill-mode:both}.Vue-Toastification__bounce-move{transition-property:all;transition-duration:.4s;transition-timing-function:ease-in-out}@keyframes fadeOutTop{0%{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-50px)}}@keyframes fadeOutLeft{0%{opacity:1;transform:translate(0)}to{opacity:0;transform:translate(-50px)}}@keyframes fadeOutBottom{0%{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(50px)}}@keyframes fadeOutRight{0%{opacity:1;transform:translate(0)}to{opacity:0;transform:translate(50px)}}@keyframes fadeInLeft{0%{opacity:0;transform:translate(-50px)}to{opacity:1;transform:translate(0)}}@keyframes fadeInRight{0%{opacity:0;transform:translate(50px)}to{opacity:1;transform:translate(0)}}@keyframes fadeInTop{0%{opacity:0;transform:translateY(-50px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeInBottom{0%{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}.Vue-Toastification__fade-enter-active.top-left,.Vue-Toastification__fade-enter-active.bottom-left{animation-name:fadeInLeft}.Vue-Toastification__fade-enter-active.top-right,.Vue-Toastification__fade-enter-active.bottom-right{animation-name:fadeInRight}.Vue-Toastification__fade-enter-active.top-center{animation-name:fadeInTop}.Vue-Toastification__fade-enter-active.bottom-center{animation-name:fadeInBottom}.Vue-Toastification__fade-leave-active:not(.disable-transition).top-left,.Vue-Toastification__fade-leave-active:not(.disable-transition).bottom-left{animation-name:fadeOutLeft}.Vue-Toastification__fade-leave-active:not(.disable-transition).top-right,.Vue-Toastification__fade-leave-active:not(.disable-transition).bottom-right{animation-name:fadeOutRight}.Vue-Toastification__fade-leave-active:not(.disable-transition).top-center{animation-name:fadeOutTop}.Vue-Toastification__fade-leave-active:not(.disable-transition).bottom-center{animation-name:fadeOutBottom}.Vue-Toastification__fade-leave-active,.Vue-Toastification__fade-enter-active{animation-duration:.75s;animation-fill-mode:both}.Vue-Toastification__fade-move{transition-property:all;transition-duration:.4s;transition-timing-function:ease-in-out}@keyframes slideInBlurredLeft{0%{transform-origin:100%;filter:blur(40px);opacity:0;transform:translate(-1000px)scaleX(2.5)scaleY(.2)}to{transform-origin:50%;filter:blur();opacity:1;transform:translate(0)scaleY(1)scaleX(1)}}@keyframes slideInBlurredTop{0%{transform-origin:50% 0;filter:blur(240px);opacity:0;transform:translateY(-1000px)scaleY(2.5)scaleX(.2)}to{transform-origin:50%;filter:blur();opacity:1;transform:translateY(0)scaleY(1)scaleX(1)}}@keyframes slideInBlurredRight{0%{transform-origin:0%;filter:blur(40px);opacity:0;transform:translate(1000px)scaleX(2.5)scaleY(.2)}to{transform-origin:50%;filter:blur();opacity:1;transform:translate(0)scaleY(1)scaleX(1)}}@keyframes slideInBlurredBottom{0%{transform-origin:50% 100%;filter:blur(240px);opacity:0;transform:translateY(1000px)scaleY(2.5)scaleX(.2)}to{transform-origin:50%;filter:blur();opacity:1;transform:translateY(0)scaleY(1)scaleX(1)}}@keyframes slideOutBlurredTop{0%{transform-origin:50% 0;filter:blur();opacity:1;transform:translateY(0)scaleY(1)scaleX(1)}to{transform-origin:50% 0;filter:blur(240px);opacity:0;transform:translateY(-1000px)scaleY(2)scaleX(.2)}}@keyframes slideOutBlurredBottom{0%{transform-origin:50%;filter:blur();opacity:1;transform:translateY(0)scaleY(1)scaleX(1)}to{transform-origin:50% 100%;filter:blur(240px);opacity:0;transform:translateY(1000px)scaleY(2)scaleX(.2)}}@keyframes slideOutBlurredLeft{0%{transform-origin:50%;filter:blur();opacity:1;transform:translate(0)scaleY(1)scaleX(1)}to{transform-origin:100%;filter:blur(40px);opacity:0;transform:translate(-1000px)scaleX(2)scaleY(.2)}}@keyframes slideOutBlurredRight{0%{transform-origin:50%;filter:blur();opacity:1;transform:translate(0)scaleY(1)scaleX(1)}to{transform-origin:0%;filter:blur(40px);opacity:0;transform:translate(1000px)scaleX(2)scaleY(.2)}}.Vue-Toastification__slideBlurred-enter-active.top-left,.Vue-Toastification__slideBlurred-enter-active.bottom-left{animation-name:slideInBlurredLeft}.Vue-Toastification__slideBlurred-enter-active.top-right,.Vue-Toastification__slideBlurred-enter-active.bottom-right{animation-name:slideInBlurredRight}.Vue-Toastification__slideBlurred-enter-active.top-center{animation-name:slideInBlurredTop}.Vue-Toastification__slideBlurred-enter-active.bottom-center{animation-name:slideInBlurredBottom}.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).top-left,.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).bottom-left{animation-name:slideOutBlurredLeft}.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).top-right,.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).bottom-right{animation-name:slideOutBlurredRight}.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).top-center{animation-name:slideOutBlurredTop}.Vue-Toastification__slideBlurred-leave-active:not(.disable-transition).bottom-center{animation-name:slideOutBlurredBottom}.Vue-Toastification__slideBlurred-leave-active,.Vue-Toastification__slideBlurred-enter-active{animation-duration:.75s;animation-fill-mode:both}.Vue-Toastification__slideBlurred-move{transition-property:all;transition-duration:.4s;transition-timing-function:ease-in-out}");
-	var _GM = typeof GM != "undefined" ? GM : void 0;
-	var _GM_addStyle = typeof GM_addStyle != "undefined" ? GM_addStyle : void 0;
-	var _GM_addValueChangeListener = typeof GM_addValueChangeListener != "undefined" ? GM_addValueChangeListener : void 0;
-	var _GM_getValue = typeof GM_getValue != "undefined" ? GM_getValue : void 0;
-	var _GM_setClipboard = typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0;
-	var _GM_setValue = typeof GM_setValue != "undefined" ? GM_setValue : void 0;
-	var _GM_xmlhttpRequest = typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0;
-	var _unsafeWindow = typeof unsafeWindow != "undefined" ? unsafeWindow : void 0;
+	var _GM = (() => typeof GM != "undefined" ? GM : void 0)();
+	var _GM_addStyle = (() => typeof GM_addStyle != "undefined" ? GM_addStyle : void 0)();
+	var _GM_addValueChangeListener = (() => typeof GM_addValueChangeListener != "undefined" ? GM_addValueChangeListener : void 0)();
+	var _GM_getValue = (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
+	var _GM_setClipboard = (() => typeof GM_setClipboard != "undefined" ? GM_setClipboard : void 0)();
+	var _GM_setValue = (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
+	var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+	var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
 	var ArchiveDownloadMethod = function(ArchiveDownloadMethod) {
 		ArchiveDownloadMethod["Manual"] = "Manual";
 		ArchiveDownloadMethod["HaH_Original"] = "HaH_org";
@@ -3298,6 +2980,603 @@ This will fail in production.`);
 	}
 	function isExHentai() {
 		return _unsafeWindow.location.origin === "https://exhentai.org";
+	}
+	function tryOnScopeDispose(fn, failSilently) {
+		if ((0, vue.getCurrentScope)()) {
+			(0, vue.onScopeDispose)(fn, failSilently);
+			return true;
+		}
+		return false;
+	}
+	var isClient = typeof window !== "undefined" && typeof document !== "undefined";
+	typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
+	var notNullish = (val) => val != null;
+	var toString = Object.prototype.toString;
+	var isObject = (val) => toString.call(val) === "[object Object]";
+	var noop = () => {};
+	function toRef$2(...args) {
+		if (args.length !== 1) return (0, vue.toRef)(...args);
+		const r = args[0];
+		return typeof r === "function" ? (0, vue.readonly)((0, vue.customRef)(() => ({
+			get: r,
+			set: noop
+		}))) : (0, vue.ref)(r);
+	}
+	function createFilterWrapper(filter, fn) {
+		function wrapper(...args) {
+			return new Promise((resolve, reject) => {
+				Promise.resolve(filter(() => fn.apply(this, args), {
+					fn,
+					thisArg: this,
+					args
+				})).then(resolve).catch(reject);
+			});
+		}
+		if ("cancel" in filter) Object.assign(wrapper, {
+			cancel: filter.cancel,
+			flush: filter.flush,
+			isPending: filter.isPending
+		});
+		return wrapper;
+	}
+	var bypassFilter = (invoke) => {
+		return invoke();
+	};
+	function pausableFilter(extendFilter = bypassFilter, options = {}) {
+		const { initialState = "active" } = options;
+		const isActive = toRef$2(initialState === "active");
+		function pause() {
+			isActive.value = false;
+		}
+		function resume() {
+			isActive.value = true;
+		}
+		const eventFilter = (...args) => {
+			if (isActive.value) extendFilter(...args);
+		};
+		return {
+			isActive: (0, vue.shallowReadonly)(isActive),
+			pause,
+			resume,
+			eventFilter
+		};
+	}
+	function objectEntries(obj) {
+		return Object.entries(obj);
+	}
+	function toArray(value) {
+		return Array.isArray(value) ? value : [value];
+	}
+	function getLifeCycleTarget(target) {
+		return target || (0, vue.getCurrentInstance)();
+	}
+	function createSharedComposable(composable) {
+		if (!isClient) return composable;
+		let subscribers = 0;
+		let state;
+		let scope;
+		const dispose = () => {
+			subscribers -= 1;
+			if (scope && subscribers <= 0) {
+				scope.stop();
+				state = void 0;
+				scope = void 0;
+			}
+		};
+		return ((...args) => {
+			subscribers += 1;
+			if (!scope) {
+				scope = (0, vue.effectScope)(true);
+				state = scope.run(() => composable(...args));
+			}
+			tryOnScopeDispose(dispose);
+			return state;
+		});
+	}
+	function watchWithFilter(source, cb, options = {}) {
+		const { eventFilter = bypassFilter, ...watchOptions } = options;
+		return (0, vue.watch)(source, createFilterWrapper(eventFilter, cb), watchOptions);
+	}
+	function watchPausable(source, cb, options = {}) {
+		const { eventFilter: filter, initialState = "active", ...watchOptions } = options;
+		const { eventFilter, pause, resume, isActive } = pausableFilter(filter, { initialState });
+		return {
+			stop: watchWithFilter(source, cb, {
+				...watchOptions,
+				eventFilter
+			}),
+			pause,
+			resume,
+			isActive
+		};
+	}
+	function tryOnMounted(fn, sync = true, target) {
+		if (getLifeCycleTarget(target)) (0, vue.onMounted)(fn, target);
+		else if (sync) fn();
+		else (0, vue.nextTick)(fn);
+	}
+	function watchImmediate(source, cb, options) {
+		return (0, vue.watch)(source, cb, {
+			...options,
+			immediate: true
+		});
+	}
+	var defaultWindow = isClient ? window : void 0;
+	var defaultDocument = isClient ? window.document : void 0;
+	isClient && window.navigator;
+	isClient && window.location;
+	function unrefElement(elRef) {
+		var _$el;
+		const plain = (0, vue.toValue)(elRef);
+		return (_$el = plain === null || plain === void 0 ? void 0 : plain.$el) !== null && _$el !== void 0 ? _$el : plain;
+	}
+	function useEventListener(...args) {
+		const register = (el, event, listener, options) => {
+			el.addEventListener(event, listener, options);
+			return () => el.removeEventListener(event, listener, options);
+		};
+		const firstParamTargets = (0, vue.computed)(() => {
+			const test = toArray((0, vue.toValue)(args[0])).filter((e) => e != null);
+			return test.every((e) => typeof e !== "string") ? test : void 0;
+		});
+		return watchImmediate(() => {
+			var _firstParamTargets$va, _firstParamTargets$va2;
+			return [
+				(_firstParamTargets$va = (_firstParamTargets$va2 = firstParamTargets.value) === null || _firstParamTargets$va2 === void 0 ? void 0 : _firstParamTargets$va2.map((e) => unrefElement(e))) !== null && _firstParamTargets$va !== void 0 ? _firstParamTargets$va : [defaultWindow].filter((e) => e != null),
+				toArray((0, vue.toValue)(firstParamTargets.value ? args[1] : args[0])),
+				toArray((0, vue.unref)(firstParamTargets.value ? args[2] : args[1])),
+				(0, vue.toValue)(firstParamTargets.value ? args[3] : args[2])
+			];
+		}, ([raw_targets, raw_events, raw_listeners, raw_options], _, onCleanup) => {
+			if (!(raw_targets === null || raw_targets === void 0 ? void 0 : raw_targets.length) || !(raw_events === null || raw_events === void 0 ? void 0 : raw_events.length) || !(raw_listeners === null || raw_listeners === void 0 ? void 0 : raw_listeners.length)) return;
+			const optionsClone = isObject(raw_options) ? { ...raw_options } : raw_options;
+			const cleanups = raw_targets.flatMap((el) => raw_events.flatMap((event) => raw_listeners.map((listener) => register(el, event, listener, optionsClone))));
+			onCleanup(() => {
+				cleanups.forEach((fn) => fn());
+			});
+		}, { flush: "post" });
+	}
+	function useMounted() {
+		const isMounted = (0, vue.shallowRef)(false);
+		const instance = (0, vue.getCurrentInstance)();
+		if (instance) (0, vue.onMounted)(() => {
+			isMounted.value = true;
+		}, instance);
+		return isMounted;
+	}
+	function useSupported(callback) {
+		const isMounted = useMounted();
+		return (0, vue.computed)(() => {
+			isMounted.value;
+			return Boolean(callback());
+		});
+	}
+	function useMutationObserver(target, callback, options = {}) {
+		const { window = defaultWindow, ...mutationOptions } = options;
+		let observer;
+		const isSupported = useSupported(() => window && "MutationObserver" in window);
+		const cleanup = () => {
+			if (observer) {
+				observer.disconnect();
+				observer = void 0;
+			}
+		};
+		const stopWatch = (0, vue.watch)((0, vue.computed)(() => {
+			const items = toArray((0, vue.toValue)(target)).map(unrefElement).filter(notNullish);
+			return new Set(items);
+		}), (newTargets) => {
+			cleanup();
+			if (isSupported.value && newTargets.size) {
+				observer = new MutationObserver(callback);
+				newTargets.forEach((el) => observer.observe(el, mutationOptions));
+			}
+		}, {
+			immediate: true,
+			flush: "post"
+		});
+		const takeRecords = () => {
+			return observer === null || observer === void 0 ? void 0 : observer.takeRecords();
+		};
+		const stop = () => {
+			stopWatch();
+			cleanup();
+		};
+		tryOnScopeDispose(stop);
+		return {
+			isSupported,
+			stop,
+			takeRecords
+		};
+	}
+	var WRITABLE_PROPERTIES = [
+		"hash",
+		"host",
+		"hostname",
+		"href",
+		"pathname",
+		"port",
+		"protocol",
+		"search"
+	];
+	function useBrowserLocation(options = {}) {
+		const { window = defaultWindow } = options;
+		const refs = Object.fromEntries(WRITABLE_PROPERTIES.map((key) => [key, (0, vue.ref)()]));
+		const buildState = (trigger) => {
+			var _window$location;
+			const { state, length } = (window === null || window === void 0 ? void 0 : window.history) || {};
+			const { origin } = (window === null || window === void 0 ? void 0 : window.location) || {};
+			for (const key of WRITABLE_PROPERTIES) refs[key].value = window === null || window === void 0 || (_window$location = window.location) === null || _window$location === void 0 ? void 0 : _window$location[key];
+			return (0, vue.reactive)({
+				trigger,
+				state,
+				length,
+				origin,
+				...refs
+			});
+		};
+		const state = (0, vue.ref)(buildState("load"));
+		for (const [key, ref] of objectEntries(refs)) (0, vue.watch)(ref, (value) => {
+			if (!(window === null || window === void 0 ? void 0 : window.location) || window.location[key] === value) return;
+			window.location[key] = value;
+		});
+		if (window) {
+			const listenerOptions = { passive: true };
+			useEventListener(window, "popstate", () => state.value = buildState("popstate"), listenerOptions);
+			useEventListener(window, "hashchange", () => state.value = buildState("hashchange"), listenerOptions);
+		}
+		return state;
+	}
+	var _global = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+	var globalKey = "__vueuse_ssr_handlers__";
+	var handlers = getHandlers();
+	function getHandlers() {
+		if (!(globalKey in _global)) _global[globalKey] = _global[globalKey] || {};
+		return _global[globalKey];
+	}
+	function getSSRHandler(key, fallback) {
+		return handlers[key] || fallback;
+	}
+	function guessSerializerType(rawInit) {
+		return rawInit == null ? "any" : rawInit instanceof Set ? "set" : rawInit instanceof Map ? "map" : rawInit instanceof Date ? "date" : typeof rawInit === "boolean" ? "boolean" : typeof rawInit === "string" ? "string" : typeof rawInit === "object" ? "object" : !Number.isNaN(rawInit) ? "number" : "any";
+	}
+	var StorageSerializers = {
+		boolean: {
+			read: (v) => v === "true",
+			write: (v) => String(v)
+		},
+		object: {
+			read: (v) => JSON.parse(v),
+			write: (v) => JSON.stringify(v)
+		},
+		number: {
+			read: (v) => Number.parseFloat(v),
+			write: (v) => String(v)
+		},
+		any: {
+			read: (v) => v,
+			write: (v) => String(v)
+		},
+		string: {
+			read: (v) => v,
+			write: (v) => String(v)
+		},
+		map: {
+			read: (v) => new Map(JSON.parse(v)),
+			write: (v) => JSON.stringify(Array.from(v.entries()))
+		},
+		set: {
+			read: (v) => new Set(JSON.parse(v)),
+			write: (v) => JSON.stringify(Array.from(v))
+		},
+		date: {
+			read: (v) => new Date(v),
+			write: (v) => v.toISOString()
+		}
+	};
+	var customStorageEventName = "vueuse-storage";
+	function useStorage(key, defaults, storage, options = {}) {
+		var _options$serializer;
+		const { flush = "pre", deep = true, listenToStorageChanges = true, writeDefaults = true, mergeDefaults = false, shallow, window = defaultWindow, eventFilter, onError = (e) => {
+			console.error(e);
+		}, initOnMounted } = options;
+		const data = (shallow ? vue.shallowRef : vue.ref)(typeof defaults === "function" ? defaults() : defaults);
+		const keyComputed = (0, vue.computed)(() => (0, vue.toValue)(key));
+		if (!storage) try {
+			storage = getSSRHandler("getDefaultStorage", () => defaultWindow === null || defaultWindow === void 0 ? void 0 : defaultWindow.localStorage)();
+		} catch (e) {
+			onError(e);
+		}
+		if (!storage) return data;
+		const rawInit = (0, vue.toValue)(defaults);
+		const type = guessSerializerType(rawInit);
+		const serializer = (_options$serializer = options.serializer) !== null && _options$serializer !== void 0 ? _options$serializer : StorageSerializers[type];
+		const { pause: pauseWatch, resume: resumeWatch } = watchPausable(data, (newValue) => write(newValue), {
+			flush,
+			deep,
+			eventFilter
+		});
+		(0, vue.watch)(keyComputed, () => update(), { flush });
+		let firstMounted = false;
+		const onStorageEvent = (ev) => {
+			if (initOnMounted && !firstMounted) return;
+			update(ev);
+		};
+		const onStorageCustomEvent = (ev) => {
+			if (initOnMounted && !firstMounted) return;
+			updateFromCustomEvent(ev);
+		};
+		if (window && listenToStorageChanges) if (storage instanceof Storage) useEventListener(window, "storage", onStorageEvent, { passive: true });
+		else useEventListener(window, customStorageEventName, onStorageCustomEvent);
+		if (initOnMounted) tryOnMounted(() => {
+			firstMounted = true;
+			update();
+		});
+		else update();
+		function dispatchWriteEvent(oldValue, newValue) {
+			if (window) {
+				const payload = {
+					key: keyComputed.value,
+					oldValue,
+					newValue,
+					storageArea: storage
+				};
+				window.dispatchEvent(storage instanceof Storage ? new StorageEvent("storage", payload) : new CustomEvent(customStorageEventName, { detail: payload }));
+			}
+		}
+		function write(v) {
+			try {
+				const oldValue = storage.getItem(keyComputed.value);
+				if (v == null) {
+					dispatchWriteEvent(oldValue, null);
+					storage.removeItem(keyComputed.value);
+				} else {
+					const serialized = serializer.write(v);
+					if (oldValue !== serialized) {
+						storage.setItem(keyComputed.value, serialized);
+						dispatchWriteEvent(oldValue, serialized);
+					}
+				}
+			} catch (e) {
+				onError(e);
+			}
+		}
+		function read(event) {
+			const rawValue = event ? event.newValue : storage.getItem(keyComputed.value);
+			if (rawValue == null) {
+				if (writeDefaults && rawInit != null) storage.setItem(keyComputed.value, serializer.write(rawInit));
+				return rawInit;
+			} else if (!event && mergeDefaults) {
+				const value = serializer.read(rawValue);
+				if (typeof mergeDefaults === "function") return mergeDefaults(value, rawInit);
+				else if (type === "object" && !Array.isArray(value)) return {
+					...rawInit,
+					...value
+				};
+				return value;
+			} else if (typeof rawValue !== "string") return rawValue;
+			else return serializer.read(rawValue);
+		}
+		function update(event) {
+			if (event && event.storageArea !== storage) return;
+			if (event && event.key == null) {
+				data.value = rawInit;
+				return;
+			}
+			if (event && event.key !== keyComputed.value) return;
+			pauseWatch();
+			try {
+				const serializedData = serializer.write(data.value);
+				if (event === void 0 || (event === null || event === void 0 ? void 0 : event.newValue) !== serializedData) data.value = read(event);
+			} catch (e) {
+				onError(e);
+			} finally {
+				if (event) (0, vue.nextTick)(resumeWatch);
+				else resumeWatch();
+			}
+		}
+		function updateFromCustomEvent(event) {
+			update(event.detail);
+		}
+		return data;
+	}
+	function useResizeObserver(target, callback, options = {}) {
+		const { window = defaultWindow, ...observerOptions } = options;
+		let observer;
+		const isSupported = useSupported(() => window && "ResizeObserver" in window);
+		const cleanup = () => {
+			if (observer) {
+				observer.disconnect();
+				observer = void 0;
+			}
+		};
+		const stopWatch = (0, vue.watch)((0, vue.computed)(() => {
+			const _targets = (0, vue.toValue)(target);
+			return Array.isArray(_targets) ? _targets.map((el) => unrefElement(el)) : [unrefElement(_targets)];
+		}), (els) => {
+			cleanup();
+			if (isSupported.value && window) {
+				observer = new ResizeObserver(callback);
+				for (const _el of els) if (_el) observer.observe(_el, observerOptions);
+			}
+		}, {
+			immediate: true,
+			flush: "post"
+		});
+		const stop = () => {
+			cleanup();
+			stopWatch();
+		};
+		tryOnScopeDispose(stop);
+		return {
+			isSupported,
+			stop
+		};
+	}
+	function useElementBounding(target, options = {}) {
+		const { reset = true, windowResize = true, windowScroll = true, immediate = true, updateTiming = "sync" } = options;
+		const height = (0, vue.shallowRef)(0);
+		const bottom = (0, vue.shallowRef)(0);
+		const left = (0, vue.shallowRef)(0);
+		const right = (0, vue.shallowRef)(0);
+		const top = (0, vue.shallowRef)(0);
+		const width = (0, vue.shallowRef)(0);
+		const x = (0, vue.shallowRef)(0);
+		const y = (0, vue.shallowRef)(0);
+		function recalculate() {
+			const el = unrefElement(target);
+			if (!el) {
+				if (reset) {
+					height.value = 0;
+					bottom.value = 0;
+					left.value = 0;
+					right.value = 0;
+					top.value = 0;
+					width.value = 0;
+					x.value = 0;
+					y.value = 0;
+				}
+				return;
+			}
+			const rect = el.getBoundingClientRect();
+			height.value = rect.height;
+			bottom.value = rect.bottom;
+			left.value = rect.left;
+			right.value = rect.right;
+			top.value = rect.top;
+			width.value = rect.width;
+			x.value = rect.x;
+			y.value = rect.y;
+		}
+		function update() {
+			if (updateTiming === "sync") recalculate();
+			else if (updateTiming === "next-frame") requestAnimationFrame(() => recalculate());
+		}
+		useResizeObserver(target, update);
+		(0, vue.watch)(() => unrefElement(target), (ele) => !ele && update());
+		useMutationObserver(target, update, { attributeFilter: ["style", "class"] });
+		if (windowScroll) useEventListener("scroll", update, {
+			capture: true,
+			passive: true
+		});
+		if (windowResize) useEventListener("resize", update, { passive: true });
+		tryOnMounted(() => {
+			if (immediate) update();
+		});
+		return {
+			height,
+			bottom,
+			left,
+			right,
+			top,
+			width,
+			x,
+			y,
+			update
+		};
+	}
+	var eventHandlers = [
+		"fullscreenchange",
+		"webkitfullscreenchange",
+		"webkitendfullscreen",
+		"mozfullscreenchange",
+		"MSFullscreenChange"
+	];
+	function useFullscreen(target, options = {}) {
+		const { document = defaultDocument, autoExit = false } = options;
+		const targetRef = (0, vue.computed)(() => {
+			var _unrefElement;
+			return (_unrefElement = unrefElement(target)) !== null && _unrefElement !== void 0 ? _unrefElement : document === null || document === void 0 ? void 0 : document.documentElement;
+		});
+		const isFullscreen = (0, vue.shallowRef)(false);
+		const requestMethod = (0, vue.computed)(() => {
+			return [
+				"requestFullscreen",
+				"webkitRequestFullscreen",
+				"webkitEnterFullscreen",
+				"webkitEnterFullScreen",
+				"webkitRequestFullScreen",
+				"mozRequestFullScreen",
+				"msRequestFullscreen"
+			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
+		});
+		const exitMethod = (0, vue.computed)(() => {
+			return [
+				"exitFullscreen",
+				"webkitExitFullscreen",
+				"webkitExitFullScreen",
+				"webkitCancelFullScreen",
+				"mozCancelFullScreen",
+				"msExitFullscreen"
+			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
+		});
+		const fullscreenEnabled = (0, vue.computed)(() => {
+			return [
+				"fullScreen",
+				"webkitIsFullScreen",
+				"webkitDisplayingFullscreen",
+				"mozFullScreen",
+				"msFullscreenElement"
+			].find((m) => document && m in document || targetRef.value && m in targetRef.value);
+		});
+		const fullscreenElementMethod = [
+			"fullscreenElement",
+			"webkitFullscreenElement",
+			"mozFullScreenElement",
+			"msFullscreenElement"
+		].find((m) => document && m in document);
+		const isSupported = useSupported(() => targetRef.value && document && requestMethod.value !== void 0 && exitMethod.value !== void 0 && fullscreenEnabled.value !== void 0);
+		const isCurrentElementFullScreen = () => {
+			if (fullscreenElementMethod) return (document === null || document === void 0 ? void 0 : document[fullscreenElementMethod]) === targetRef.value;
+			return false;
+		};
+		const isElementFullScreen = () => {
+			if (fullscreenEnabled.value) if (document && document[fullscreenEnabled.value] != null) return document[fullscreenEnabled.value];
+			else {
+				const target = targetRef.value;
+				if ((target === null || target === void 0 ? void 0 : target[fullscreenEnabled.value]) != null) return Boolean(target[fullscreenEnabled.value]);
+			}
+			return false;
+		};
+		async function exit() {
+			if (!isSupported.value || !isFullscreen.value) return;
+			if (exitMethod.value) if ((document === null || document === void 0 ? void 0 : document[exitMethod.value]) != null) await document[exitMethod.value]();
+			else {
+				const target = targetRef.value;
+				if ((target === null || target === void 0 ? void 0 : target[exitMethod.value]) != null) await target[exitMethod.value]();
+			}
+			isFullscreen.value = false;
+		}
+		async function enter() {
+			if (!isSupported.value || isFullscreen.value) return;
+			if (isElementFullScreen()) await exit();
+			const target = targetRef.value;
+			if (requestMethod.value && (target === null || target === void 0 ? void 0 : target[requestMethod.value]) != null) {
+				await target[requestMethod.value]();
+				isFullscreen.value = true;
+			}
+		}
+		async function toggle() {
+			await (isFullscreen.value ? exit() : enter());
+		}
+		const handlerCallback = () => {
+			const isElementFullScreenValue = isElementFullScreen();
+			if (!isElementFullScreenValue || isElementFullScreenValue && isCurrentElementFullScreen()) isFullscreen.value = isElementFullScreenValue;
+		};
+		const listenerOptions = {
+			capture: false,
+			passive: true
+		};
+		useEventListener(document, eventHandlers, handlerCallback, listenerOptions);
+		useEventListener(() => unrefElement(targetRef), eventHandlers, handlerCallback, listenerOptions);
+		tryOnMounted(handlerCallback, false);
+		if (autoExit) tryOnScopeDispose(exit);
+		return {
+			isSupported,
+			isFullscreen,
+			enter,
+			exit,
+			toggle
+		};
 	}
 	function setWheelStep({ containerSelector, itemsSelector }) {
 		const container = getElement(containerSelector);
@@ -3604,11 +3883,11 @@ This will fail in production.`);
 	};
 	var HAH_RESOLUTION_ATTRIBUTE = "data-hathdl-xres";
 	function getResolutionLabel(resolution) {
-		return resolution === HAH_ORIGINAL_RESOLUTION ? "Original" : `${resolution}x`;
+		return resolution === HAH_ORIGINAL_RESOLUTION ? "原始" : `${resolution}x`;
 	}
 	var INLINE_CANCEL_CLASS = "enhancer-archive-cancel";
-	var INLINE_CANCEL_LABEL = "Invalidate Archive";
-	var INLINE_CANCEL_PENDING_LABEL = "Invalidating...";
+	var INLINE_CANCEL_LABEL = "使归档失效";
+	var INLINE_CANCEL_PENDING_LABEL = "正在失效…";
 	function getInvalidateForm(root = document) {
 		return getElement("#invalidate_form", root);
 	}
@@ -3691,9 +3970,9 @@ This will fail in production.`);
 					if (parsedResponse) {
 						link.classList.remove("is-fetching");
 						if (/download has been queued/.test(parsedResponse)) {
-							toast.success(parsedResponse);
+							toast.success(`已加入下载队列：${parsedResponse}`);
 							link.classList.add("is-finished");
-						} else toast.error(parsedResponse);
+						} else toast.error(`下载请求失败：${parsedResponse}`);
 					}
 					setAsDownloaded(getGalleryID(postUrl));
 				});
@@ -3726,7 +4005,7 @@ This will fail in production.`);
 		async function startDirectDownload(url, dltype) {
 			const result = await requestDirectDownload(url, dltype);
 			if (!result.success) {
-				toast.error("something went wrong. Open your console to see the response");
+				toast.error("出了点问题，请打开浏览器控制台查看返回内容");
 				console.warn("Download failed, response HTML:", result.html);
 				return false;
 			}
@@ -3782,11 +4061,11 @@ This will fail in production.`);
 			cancelButton.removeAttribute("onclick");
 			cancelButton.addEventListener("click", async (event) => {
 				event.preventDefault();
-				cancelButton.innerHTML = "canceling...";
+				cancelButton.innerHTML = "正在取消…";
 				const doc = await cancelArchiveSession();
 				if (!doc) {
 					logger.error("failed to cancel the archive session.");
-					cancelButton.innerHTML = "cancel";
+					cancelButton.innerHTML = "取消";
 					return;
 				}
 				refreshArchivePopup(doc);
@@ -3842,11 +4121,11 @@ This will fail in production.`);
 				return true;
 			}
 			if (getElements(`[${HAH_RESOLUTION_ATTRIBUTE}]`, popup.value)?.length) {
-				toast.warning(`This gallery doesn't offer H@H ${getResolutionLabel(resolution)}.\n Open popup`);
+				toast.warning(`此画廊不提供 H@H ${getResolutionLabel(resolution)} 分辨率。\n 已打开弹窗`);
 				return false;
 			}
 			logger.error("hentai@Home links not found.");
-			toast.error("Failed to find the H@H links.\n Open popup");
+			toast.error("未能找到 H@H 下载链接。\n 已打开弹窗");
 			return false;
 		}
 		function quickDownload(popup) {
@@ -3935,7 +4214,7 @@ This will fail in production.`);
 			const activeButton = (0, vue.ref)();
 			function setHideButtonState(button, isHidden) {
 				button.classList.toggle("is-hidden", isHidden);
-				button.title = isHidden ? "Unhide gallery" : "Hide gallery";
+				button.title = isHidden ? "取消隐藏此画廊" : "隐藏此画廊";
 			}
 			function appendHideButtons() {
 				getElements(".gl1t")?.forEach((gallery) => {
@@ -3975,12 +4254,13 @@ This will fail in production.`);
 					const button = document.createElement("span");
 					button.classList.add("archive-button");
 					button.textContent = "A";
-					button.title = "Show Archive";
+					button.title = "查看归档";
 					button.onclick = async () => {
 						isArchivePopupShow.value = !isArchivePopupShow.value;
-						archiveInnerHtml.value = "Fetching...";
+						archiveInnerHtml.value = "加载中…";
 						activeButton.value = button;
-						archiveInnerHtml.value = await fetchArchive(await getArchiveLink(getElement("a", gallery).href));
+						const archiveLink = await getArchiveLink(getElement("a", gallery).href);
+						archiveInnerHtml.value = await fetchArchive(archiveLink);
 						setTimeout(() => {
 							setArchiveEvent();
 						}, 0);
@@ -4152,16 +4432,16 @@ This will fail in production.`);
 				if (!insertionPoint) return;
 				const button = document.createElement("input");
 				button.type = "button";
-				button.value = "Copy Magnet";
+				button.value = "复制磁力链接";
 				button.dataset.magnetButton = "true";
 				button.style.marginBottom = "4px";
 				button.onclick = async () => {
 					_GM_setClipboard(magnet, "text");
-					button.value = "✅ Copied";
+					button.value = "✅ 已复制";
 					button.disabled = true;
 					setTimeout(() => {
 						button.disabled = false;
-						button.value = "Copy Magnet";
+						button.value = "复制磁力链接";
 					}, 1e3);
 				};
 				insertionPoint.parentNode?.insertBefore(button, insertionPoint);
@@ -4257,7 +4537,7 @@ This will fail in production.`);
 				});
 				const expungeLink = popup.value.querySelector("[onclick*=\"expungeform\"]");
 				if (expungeLink) {
-					const message = expungeLink.textContent?.includes("Delete") ? "Are you sure you wish to delete this torrent? This action cannot be undone." : "Are you sure you wish to expunge this torrent? This action cannot be undone.";
+					const message = expungeLink.textContent?.includes("Delete") ? "确定要删除这个种子吗？此操作无法撤销。" : "确定要移除这个种子吗？此操作无法撤销。";
 					expungeLink.removeAttribute("onclick");
 					expungeLink.addEventListener("click", async (event) => {
 						event.preventDefault();
@@ -4633,7 +4913,7 @@ This will fail in production.`);
 			invoke();
 		};
 		const debounced = function(...args) {
-			if (signal?.aborted) return;
+			if (signal === null || signal === void 0 ? void 0 : signal.aborted) return;
 			pendingThis = this;
 			pendingArgs = args;
 			const isFirstCall = timeoutId == null;
@@ -4643,7 +4923,7 @@ This will fail in production.`);
 		debounced.schedule = schedule;
 		debounced.cancel = cancel;
 		debounced.flush = flush;
-		signal?.addEventListener("abort", cancel, { once: true });
+		signal === null || signal === void 0 || signal.addEventListener("abort", cancel, { once: true });
 		return debounced;
 	}
 	var useEvents = createSharedComposable(_useEvents);
@@ -4658,9 +4938,7 @@ This will fail in production.`);
 					case "ArrowLeft":
 						goToPageByOffset(-10);
 						break;
-					case "ArrowRight":
-						goToPageByOffset(10);
-						break;
+					case "ArrowRight": goToPageByOffset(10);
 				}
 				else {
 					const currentImage = getCurrentImage();
@@ -4717,9 +4995,7 @@ This will fail in production.`);
 						case "Numpad7":
 							rotate(-90);
 							break;
-						case "Numpad9":
-							rotate(90);
-							break;
+						case "Numpad9": rotate(90);
 					}
 				}
 			});
@@ -4752,7 +5028,8 @@ This will fail in production.`);
 			}
 			function setThumbsClickEvent() {
 				paneThumbsDiv.addEventListener("click", (event) => {
-					currentPage.value = Number(event.target.closest("div")?.id.replace("thumb_", ""));
+					const index = Number(event.target.closest("div")?.id.replace("thumb_", ""));
+					currentPage.value = index;
 				});
 			}
 		}
@@ -5588,7 +5865,7 @@ div#bar3 {
 		setup(__props) {
 			const isShow = (0, vue.ref)(false);
 			(0, vue.onMounted)(() => {
-				_GM.registerMenuCommand("Open settings panel", () => isShow.value = !isShow.value);
+				_GM.registerMenuCommand("打开设置面板", () => isShow.value = !isShow.value);
 			});
 			const isDirectDownload = (0, vue.computed)(() => !!getArchiveDownloadType(quickArchiveDownloadMethod.value));
 			function reload() {
@@ -5605,32 +5882,32 @@ div#bar3 {
 					default: (0, vue.withCtx)(() => [
 						(0, vue.createElementVNode)("div", _hoisted_1, [
 							(0, vue.createElementVNode)("section", _hoisted_2, [
-								_cache[27] || (_cache[27] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " Common ", -1)),
+								_cache[27] || (_cache[27] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 通用 ", -1)),
 								_cache[28] || (_cache[28] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_3, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(showJapaneseTitle).value,
 									"onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => (0, vue.unref)(showJapaneseTitle).value = $event)
-								}, null, 8, ["modelValue"]), _cache[26] || (_cache[26] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Change Browser Tab Title to Japanese ", -1))])
+								}, null, 8, ["modelValue"]), _cache[26] || (_cache[26] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 将浏览器标签页标题改为日文 ", -1))])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_4, [
-								_cache[40] || (_cache[40] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " Gallery Enhancer ", -1)),
+								_cache[40] || (_cache[40] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 画廊页增强 ", -1)),
 								_cache[41] || (_cache[41] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_5, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(scrollByRowSwitch).value,
 										"onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => (0, vue.unref)(scrollByRowSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[29] || (_cache[29] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Scroll by Row ", -1)),
-									_cache[30] || (_cache[30] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *Synced with \"Galleries Enhancer - Scroll by Row\" ", -1))
+									_cache[29] || (_cache[29] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
+									_cache[30] || (_cache[30] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「列表页增强 - 按行滚动」联动 ", -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_6, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(betterPopupSwitch).value,
 										"onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => (0, vue.unref)(betterPopupSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[37] || (_cache[37] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Better Popup ", -1)),
+									_cache[37] || (_cache[37] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 内嵌弹窗 ", -1)),
 									(0, vue.createElementVNode)("div", _hoisted_7, [
-										_cache[31] || (_cache[31] = (0, vue.createElementVNode)("span", null, " Action when clicking \"Archive Download\": ", -1)),
+										_cache[31] || (_cache[31] = (0, vue.createElementVNode)("span", null, " 点击「归档下载」时的行为： ", -1)),
 										(0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => (0, vue.unref)(quickArchiveDownloadMethod).value = $event),
 											class: "settings__select"
@@ -5638,46 +5915,46 @@ div#bar3 {
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).Manual
-											}, " Manual ", 8, _hoisted_8),
+											}, " 手动打开弹窗 ", 8, _hoisted_8),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).HaH_Original
-											}, " download Original Resolution with H@H ", 8, _hoisted_9),
+											}, " 通过 H@H 下载原始分辨率 ", 8, _hoisted_9),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).HaH_800
-											}, " download 800x Resolution with H@H ", 8, _hoisted_10),
+											}, " 通过 H@H 下载 800x 分辨率 ", 8, _hoisted_10),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).HaH_1280
-											}, " download 1280x Resolution with H@H ", 8, _hoisted_11),
+											}, " 通过 H@H 下载 1280x 分辨率 ", 8, _hoisted_11),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).HaH_1920
-											}, " download 1920x Resolution with H@H ", 8, _hoisted_12),
+											}, " 通过 H@H 下载 1920x 分辨率 ", 8, _hoisted_12),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).HaH_2560
-											}, " download 2560x Resolution with H@H ", 8, _hoisted_13),
+											}, " 通过 H@H 下载 2560x 分辨率 ", 8, _hoisted_13),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).Direct_Origin
-											}, " download Original Resolution directly ", 8, _hoisted_14),
+											}, " 直接下载原始分辨率 ", 8, _hoisted_14),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveDownloadMethod).Direct_Resample
-											}, " download Resample Resolution directly ", 8, _hoisted_15)
+											}, " 直接下载重采样分辨率 ", 8, _hoisted_15)
 										], 512), [[vue.vModelSelect, (0, vue.unref)(quickArchiveDownloadMethod).value]]),
-										_cache[32] || (_cache[32] = (0, vue.createElementVNode)("p", null, " *Note: Not every gallery offers every H@H resolution. When the one you picked isn't available, the pop-up opens instead. ", -1)),
+										_cache[32] || (_cache[32] = (0, vue.createElementVNode)("p", null, " *注意：并非每个画廊都提供所有 H@H 分辨率。当所选分辨率不可用时，会改为打开弹窗。 ", -1)),
 										_cache[33] || (_cache[33] = (0, vue.createElementVNode)("p", null, [
-											(0, vue.createTextVNode)(" *Note: If you have changed the Archiver Settings, you must revert it to \"Manual Select, Manual Start (Default)\" on the settings page: "),
+											(0, vue.createTextVNode)(" *注意：如果你改过 Archiver 设置，必须先到设置页面把它改回「Manual Select, Manual Start (Default)」（手动选择、手动开始）： "),
 											(0, vue.createElementVNode)("a", {
 												class: "settings__link",
 												target: "_blank",
 												href: "https://e-hentai.org/uconfig.php",
 												rel: "noreferrer noopener"
 											}, " E-Hentai "),
-											(0, vue.createTextVNode)(" , "),
+											(0, vue.createTextVNode)(" 、 "),
 											(0, vue.createElementVNode)("a", {
 												class: "settings__link",
 												target: "_blank",
@@ -5685,7 +5962,7 @@ div#bar3 {
 												rel: "noreferrer noopener"
 											}, " ExHentai ")
 										], -1)),
-										_cache[34] || (_cache[34] = (0, vue.createElementVNode)("span", null, " Action when a previous archive session is still active: ", -1)),
+										_cache[34] || (_cache[34] = (0, vue.createElementVNode)("span", null, " 上次的归档会话仍然有效时的行为： ", -1)),
 										(0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => (0, vue.unref)(archiveSessionAction).value = $event),
 											class: "settings__select",
@@ -5694,78 +5971,78 @@ div#bar3 {
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveSessionAction).DownloadDirectly
-											}, " download directly ", 8, _hoisted_17),
+											}, " 直接下载 ", 8, _hoisted_17),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveSessionAction).OpenPopup
-											}, " open the popup ", 8, _hoisted_18),
+											}, " 打开弹窗 ", 8, _hoisted_18),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveSessionAction).CancelThenDownload
-											}, " cancel the session, then download ", 8, _hoisted_19),
+											}, " 先取消会话，再下载 ", 8, _hoisted_19),
 											(0, vue.createElementVNode)("option", {
 												class: "settings__option",
 												value: (0, vue.unref)(ArchiveSessionAction).ShowCancelButton
-											}, " add an \"Invalidate Archive\" button below \"Archive Download\" ", 8, _hoisted_20)
+											}, " 在「归档下载」下方新增「使归档失效」按钮 ", 8, _hoisted_20)
 										], 8, _hoisted_16), [[vue.vModelSelect, (0, vue.unref)(archiveSessionAction).value]]),
-										_cache[35] || (_cache[35] = (0, vue.createElementVNode)("p", null, " *Only applies when the option above is set to a \"directly\" method. ", -1)),
-										_cache[36] || (_cache[36] = (0, vue.createElementVNode)("p", null, " *\"cancel the session, then download\" invalidates the archive session you already paid for, so each download will cost GP again. ", -1))
+										_cache[35] || (_cache[35] = (0, vue.createElementVNode)("p", null, " *仅在上一项设置为「直接下载」类方式时生效。 ", -1)),
+										_cache[36] || (_cache[36] = (0, vue.createElementVNode)("p", null, " *「先取消会话，再下载」会让已经付费解锁的归档会话失效，因此每次下载都需要重新消耗 GP。 ", -1))
 									])
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_21, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(quickTorrentDownloadSwitch).value,
 									"onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => (0, vue.unref)(quickTorrentDownloadSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[38] || (_cache[38] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Download Directly if Only One Torrent Is Available ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[38] || (_cache[38] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 仅有一个种子时直接下载 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_22, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(loadAllGalleryImagesSwitch).value,
 									"onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => (0, vue.unref)(loadAllGalleryImagesSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[39] || (_cache[39] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Load All Gallery Images ", -1))])
+								}, null, 8, ["modelValue"]), _cache[39] || (_cache[39] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 加载画廊内所有图片 ", -1))])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_23, [
-								_cache[55] || (_cache[55] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " Multi-Page Viewer Enhancer ", -1)),
+								_cache[55] || (_cache[55] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 多页查看器增强 ", -1)),
 								_cache[56] || (_cache[56] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_24, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(multipageViewerEnhancerSwitch).value,
 									"onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => (0, vue.unref)(multipageViewerEnhancerSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[42] || (_cache[42] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Multi-Page Viewer Enhancer ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[42] || (_cache[42] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 多页查看器增强 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_25, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(preventImageRemovalSwitch).value,
 										"onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => (0, vue.unref)(preventImageRemovalSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[43] || (_cache[43] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Prevent Image Removal ", -1)),
-									_cache[44] || (_cache[44] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [(0, vue.createElementVNode)("p", null, " ExHentai's built-in script removes images that are far from your current scroll position. Scrolling back to a removed image may cause it to flash, since the browser must re-render it even if it's cached. ")], -1))
+									_cache[43] || (_cache[43] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 阻止图片被移除 ", -1)),
+									_cache[44] || (_cache[44] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [(0, vue.createElementVNode)("p", null, " ExHentai 内置脚本会移除距离当前滚动位置较远的图片。 往回滚动到已被移除的图片时可能会闪烁，因为即使图片已经缓存，浏览器仍需重新渲染它。 ")], -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_26, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(changePageByWheelAnyWhereSwitch).value,
 									"onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => (0, vue.unref)(changePageByWheelAnyWhereSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[45] || (_cache[45] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Change Page by Scrolling the Mouse Wheel Anywhere ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[45] || (_cache[45] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 在任意位置滚动滚轮即可翻页 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_27, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(autoRedirectSwitch).value,
 									"onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => (0, vue.unref)(autoRedirectSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[46] || (_cache[46] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Auto-Redirect to Multi-Page Viewer ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[46] || (_cache[46] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 自动跳转到多页查看器 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_28, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(magnifierSwitch).value,
 										"onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => (0, vue.unref)(magnifierSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[54] || (_cache[54] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Image Magnifier ", -1)),
-									(0, vue.createElementVNode)("div", _hoisted_29, [_cache[53] || (_cache[53] = (0, vue.createElementVNode)("p", null, " Long-press the activation button to enable the magnifier. Press both mouse buttons simultaneously to view the image at its original scale. ", -1)), (0, vue.createElementVNode)("div", _hoisted_30, [
-										(0, vue.createElementVNode)("label", _hoisted_31, [_cache[47] || (_cache[47] = (0, vue.createTextVNode)(" Activation Button: ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("select", {
+									_cache[54] || (_cache[54] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 图片放大镜 ", -1)),
+									(0, vue.createElementVNode)("div", _hoisted_29, [_cache[53] || (_cache[53] = (0, vue.createElementVNode)("p", null, " 长按激活按键即可开启放大镜。 同时按下鼠标左右键可以按原始比例查看图片。 ", -1)), (0, vue.createElementVNode)("div", _hoisted_30, [
+										(0, vue.createElementVNode)("label", _hoisted_31, [_cache[47] || (_cache[47] = (0, vue.createTextVNode)(" 激活按键： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => (0, vue.unref)(magnifierActivationButton).value = $event),
 											class: "settings__select"
 										}, [(0, vue.createElementVNode)("option", {
 											class: "settings__option",
 											value: (0, vue.unref)(MouseButton).Left
-										}, "Left Mouse Button", 8, _hoisted_32), (0, vue.createElementVNode)("option", {
+										}, "鼠标左键", 8, _hoisted_32), (0, vue.createElementVNode)("option", {
 											class: "settings__option",
 											value: (0, vue.unref)(MouseButton).Right
-										}, "Right Mouse Button", 8, _hoisted_33)], 512), [[vue.vModelSelect, (0, vue.unref)(magnifierActivationButton).value]])]),
+										}, "鼠标右键", 8, _hoisted_33)], 512), [[vue.vModelSelect, (0, vue.unref)(magnifierActivationButton).value]])]),
 										(0, vue.createElementVNode)("label", _hoisted_34, [(0, vue.createVNode)(ToggleSwitch_default, {
 											modelValue: (0, vue.unref)(magnifierToggleMode).value,
 											"onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => (0, vue.unref)(magnifierToggleMode).value = $event)
-										}, null, 8, ["modelValue"]), (0, vue.createTextVNode)(" " + (0, vue.toDisplayString)((0, vue.unref)(magnifierToggleMode).value ? "Toggle Mode (click once to enable, click again to disable)" : "Hold Mode (hold down to use)"), 1)]),
-										(0, vue.createElementVNode)("label", _hoisted_35, [_cache[48] || (_cache[48] = (0, vue.createTextVNode)(" Default Scale: ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										}, null, 8, ["modelValue"]), (0, vue.createTextVNode)(" " + (0, vue.toDisplayString)((0, vue.unref)(magnifierToggleMode).value ? "切换模式（点一次开启，再点一次关闭）" : "按住模式（按住不放才生效）"), 1)]),
+										(0, vue.createElementVNode)("label", _hoisted_35, [_cache[48] || (_cache[48] = (0, vue.createTextVNode)(" 默认缩放倍数： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => (0, vue.unref)(magnifierDefaultScale).value = $event),
 											type: "number",
 											min: "1.1",
@@ -5778,7 +6055,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_36, [_cache[49] || (_cache[49] = (0, vue.createTextVNode)(" Scale Step (Mouse Wheel): ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_36, [_cache[49] || (_cache[49] = (0, vue.createTextVNode)(" 缩放步进（滚轮）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => (0, vue.unref)(magnifierScaleStep).value = $event),
 											type: "number",
 											min: "0.05",
@@ -5791,7 +6068,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_37, [_cache[50] || (_cache[50] = (0, vue.createTextVNode)(" Long-Press Threshold (ms): ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_37, [_cache[50] || (_cache[50] = (0, vue.createTextVNode)(" 长按判定阈值（毫秒）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => (0, vue.unref)(magnifierLongPressThreshold).value = $event),
 											type: "number",
 											min: "50",
@@ -5804,7 +6081,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_38, [_cache[51] || (_cache[51] = (0, vue.createTextVNode)(" Mouse Sensitivity X: ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_38, [_cache[51] || (_cache[51] = (0, vue.createTextVNode)(" 鼠标灵敏度 X： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => (0, vue.unref)(magnifierSensitivityX).value = $event),
 											type: "number",
 											min: "0.5",
@@ -5817,7 +6094,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_39, [_cache[52] || (_cache[52] = (0, vue.createTextVNode)(" Mouse Sensitivity Y: ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_39, [_cache[52] || (_cache[52] = (0, vue.createTextVNode)(" 鼠标灵敏度 Y： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => (0, vue.unref)(magnifierSensitivityY).value = $event),
 											type: "number",
 											min: "0.5",
@@ -5834,39 +6111,39 @@ div#bar3 {
 								])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_40, [
-								_cache[65] || (_cache[65] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " Galleries Enhancer ", -1)),
+								_cache[65] || (_cache[65] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 列表页增强 ", -1)),
 								_cache[66] || (_cache[66] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_41, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(infiniteScrollSwitch).value,
 									"onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => (0, vue.unref)(infiniteScrollSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[57] || (_cache[57] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Infinite Scroll ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[57] || (_cache[57] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 无限滚动 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_42, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(scrollByRowSwitch).value,
 										"onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => (0, vue.unref)(scrollByRowSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Scroll by Row ", -1)),
-									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *Synced with \"Gallery Enhancer - Scroll by Row\" ", -1))
+									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
+									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「画廊页增强 - 按行滚动」联动 ", -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_43, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(highlightSwitch).value,
 										"onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => (0, vue.unref)(highlightSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[60] || (_cache[60] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Highlight Downloaded Galleries ", -1)),
-									_cache[61] || (_cache[61] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " Sets the background of downloaded galleries to black (ExHentai) or light yellow (e-hentai). ", -1))
+									_cache[60] || (_cache[60] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 高亮已下载的画廊 ", -1)),
+									_cache[61] || (_cache[61] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 将已下载画廊的背景设为黑色（ExHentai）或浅黄色（E-Hentai）。 ", -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_44, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(archiveButtonSwitch).value,
 									"onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => (0, vue.unref)(archiveButtonSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[62] || (_cache[62] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Insert Archiver Buttons ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[62] || (_cache[62] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 插入归档按钮 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_45, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(showHiddenGalleriesSwitch).value,
 										"onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => (0, vue.unref)(showHiddenGalleriesSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[63] || (_cache[63] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " Show Hidden Galleries ", -1)),
-									_cache[64] || (_cache[64] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " When enabled, galleries hidden via the 🚫 button remain visible (with the icon at full opacity) so you can unhide them. ", -1))
+									_cache[63] || (_cache[63] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示已隐藏的画廊 ", -1)),
+									_cache[64] || (_cache[64] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 开启后，通过 🚫 按钮隐藏的画廊仍会显示（图标为完全不透明），方便你取消隐藏。 ", -1))
 								])
 							])
 						]),
@@ -5877,7 +6154,7 @@ div#bar3 {
 						(0, vue.createElementVNode)("div", { class: "actions" }, [(0, vue.createElementVNode)("button", {
 							class: "actions__button",
 							onClick: reload
-						}, " Apply and Reload ")])
+						}, " 应用并刷新 ")])
 					]),
 					_: 1
 				}, 8, ["modelValue"]);
@@ -5918,7 +6195,7 @@ div#bar3 {
 	});
 	_css(".vfm--fixed{position:fixed}.vfm--absolute{position:absolute}.vfm--inset{inset:0}.vfm--overlay{z-index:-1;background-color:#00000080}.vfm--prevent-none{pointer-events:none}.vfm--prevent-auto{pointer-events:auto}.vfm--outline-none:focus{outline:none}@keyframes fade-in{0%{opacity:0}to{opacity:1}}@keyframes fade-out{0%{opacity:1}to{opacity:0}}.vfm-fade-enter-active{animation:.3s fade-in}.vfm-fade-leave-active{animation:.3s fade-out}.vfm-bounce-back{transition-property:transform;transition-duration:.3s}.vfm-slide-up-enter-active,.vfm-slide-up-leave-active,.vfm-slide-down-enter-active,.vfm-slide-down-leave-active{transition:transform .3s}.vfm-slide-down-enter-from,.vfm-slide-down-leave-to{transform:translateY(100vh)!important}.vfm-slide-up-enter-from,.vfm-slide-up-leave-to{transform:translateY(-100vh)!important}.vfm-slide-right-enter-active,.vfm-slide-right-leave-active,.vfm-slide-left-enter-active,.vfm-slide-left-leave-active{transition:transform .3s}.vfm-slide-right-enter-from,.vfm-slide-right-leave-to{transform:translate(100vw)!important}.vfm-slide-left-enter-from,.vfm-slide-left-leave-to{transform:translate(-100vw)!important}.vfm-swipe-banner-back,.vfm-swipe-banner-forward{z-index:10;width:27px;position:fixed;top:0;bottom:0}.vfm-swipe-banner-back{left:0}.vfm-swipe-banner-forward{right:0}");
 	var app = (0, vue.createApp)(App_default);
-	var vfm = zo();
+	var vfm = Go();
 	app.use(vfm);
 	app.use(src_default, {
 		transition: "Vue-Toastification__fade",

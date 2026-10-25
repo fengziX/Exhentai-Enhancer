@@ -39,7 +39,7 @@ import ToggleSwitch from './ToggleSwitch.vue'
 
 const isShow = ref(false)
 onMounted(() => {
-  GM.registerMenuCommand('Open settings panel', () => isShow.value = !isShow.value)
+  GM.registerMenuCommand('打开设置面板', () => isShow.value = !isShow.value)
 })
 
 const isDirectDownload = computed(() => !!getArchiveDownloadType(quickArchiveDownloadMethod.value))
@@ -60,7 +60,7 @@ function reload() {
     <div class="settings-panel__inner">
       <section class="settings-panel__section">
         <h2 class="settings-panel__section-name">
-          Common
+          通用
         </h2>
 
         <hr class="settings-panel__separator">
@@ -68,14 +68,14 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="showJapaneseTitle.value" />
           <h3 class="settings__name">
-            Change Browser Tab Title to Japanese
+            将浏览器标签页标题改为日文
           </h3>
         </div>
       </section>
 
       <section class="settings-panel__section">
         <h2 class="settings-panel__section-name">
-          Gallery Enhancer
+          画廊页增强
         </h2>
 
         <hr class="settings-panel__separator">
@@ -83,56 +83,55 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="scrollByRowSwitch.value" />
           <h3 class="settings__name">
-            Scroll by Row
+            按行滚动
           </h3>
           <span class="settings__notice">
-            *Synced with "Galleries Enhancer - Scroll by Row"
+            *与「列表页增强 - 按行滚动」联动
           </span>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="betterPopupSwitch.value" />
           <h3 class="settings__name">
-            Better Popup
+            内嵌弹窗
           </h3>
 
           <div class="settings__intro">
             <span>
-              Action when clicking "Archive Download":
+              点击「归档下载」时的行为：
             </span>
             <select v-model="quickArchiveDownloadMethod.value" class="settings__select">
               <option class="settings__option" :value="ArchiveDownloadMethod.Manual">
-                Manual
+                手动打开弹窗
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.HaH_Original">
-                download Original Resolution with H@H
+                通过 H@H 下载原始分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.HaH_800">
-                download 800x Resolution with H@H
+                通过 H@H 下载 800x 分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.HaH_1280">
-                download 1280x Resolution with H@H
+                通过 H@H 下载 1280x 分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.HaH_1920">
-                download 1920x Resolution with H@H
+                通过 H@H 下载 1920x 分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.HaH_2560">
-                download 2560x Resolution with H@H
+                通过 H@H 下载 2560x 分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.Direct_Origin">
-                download Original Resolution directly
+                直接下载原始分辨率
               </option>
               <option class="settings__option" :value="ArchiveDownloadMethod.Direct_Resample">
-                download Resample Resolution directly
+                直接下载重采样分辨率
               </option>
             </select>
             <p>
-              *Note: Not every gallery offers every H@H resolution. When the one you picked isn't
-              available, the pop-up opens instead.
+              *注意：并非每个画廊都提供所有 H@H 分辨率。当所选分辨率不可用时，会改为打开弹窗。
             </p>
             <p>
-              *Note: If you have changed the Archiver Settings, you must revert it to "Manual Select, Manual
-              Start (Default)" on the settings page:
+              *注意：如果你改过 Archiver 设置，必须先到设置页面把它改回「Manual Select, Manual
+              Start (Default)」（手动选择、手动开始）：
               <a
                 class="settings__link"
                 target="_blank"
@@ -141,7 +140,7 @@ function reload() {
               >
                 E-Hentai
               </a>
-              ,
+              、
               <a
                 class="settings__link"
                 target="_blank"
@@ -153,7 +152,7 @@ function reload() {
             </p>
 
             <span>
-              Action when a previous archive session is still active:
+              上次的归档会话仍然有效时的行为：
             </span>
             <select
               v-model="archiveSessionAction.value"
@@ -161,24 +160,23 @@ function reload() {
               :disabled="!isDirectDownload"
             >
               <option class="settings__option" :value="ArchiveSessionAction.DownloadDirectly">
-                download directly
+                直接下载
               </option>
               <option class="settings__option" :value="ArchiveSessionAction.OpenPopup">
-                open the popup
+                打开弹窗
               </option>
               <option class="settings__option" :value="ArchiveSessionAction.CancelThenDownload">
-                cancel the session, then download
+                先取消会话，再下载
               </option>
               <option class="settings__option" :value="ArchiveSessionAction.ShowCancelButton">
-                add an "Invalidate Archive" button below "Archive Download"
+                在「归档下载」下方新增「使归档失效」按钮
               </option>
             </select>
             <p>
-              *Only applies when the option above is set to a "directly" method.
+              *仅在上一项设置为「直接下载」类方式时生效。
             </p>
             <p>
-              *"cancel the session, then download" invalidates the archive session you already paid
-              for, so each download will cost GP again.
+              *「先取消会话，再下载」会让已经付费解锁的归档会话失效，因此每次下载都需要重新消耗 GP。
             </p>
           </div>
         </div>
@@ -186,21 +184,21 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="quickTorrentDownloadSwitch.value" />
           <h3 class="settings__name">
-            Download Directly if Only One Torrent Is Available
+            仅有一个种子时直接下载
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="loadAllGalleryImagesSwitch.value" />
           <h3 class="settings__name">
-            Load All Gallery Images
+            加载画廊内所有图片
           </h3>
         </div>
       </section>
 
       <section class="settings-panel__section">
         <h2 class="settings-panel__section-name">
-          Multi-Page Viewer Enhancer
+          多页查看器增强
         </h2>
 
         <hr class="settings-panel__separator">
@@ -208,19 +206,19 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="multipageViewerEnhancerSwitch.value" />
           <h3 class="settings__name">
-            Multi-Page Viewer Enhancer
+            多页查看器增强
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="preventImageRemovalSwitch.value" />
           <h3 class="settings__name">
-            Prevent Image Removal
+            阻止图片被移除
           </h3>
           <div class="settings__intro">
             <p>
-              ExHentai's built-in script removes images that are far from your current scroll position.
-              Scrolling back to a removed image may cause it to flash, since the browser must re-render it even if it's cached.
+              ExHentai 内置脚本会移除距离当前滚动位置较远的图片。
+              往回滚动到已被移除的图片时可能会闪烁，因为即使图片已经缓存，浏览器仍需重新渲染它。
             </p>
           </div>
         </div>
@@ -228,48 +226,48 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="changePageByWheelAnyWhereSwitch.value" />
           <h3 class="settings__name">
-            Change Page by Scrolling the Mouse Wheel Anywhere
+            在任意位置滚动滚轮即可翻页
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="autoRedirectSwitch.value" />
           <h3 class="settings__name">
-            Auto-Redirect to Multi-Page Viewer
+            自动跳转到多页查看器
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="magnifierSwitch.value" />
           <h3 class="settings__name">
-            Image Magnifier
+            图片放大镜
           </h3>
           <div class="settings__intro">
             <p>
-              Long-press the activation button to enable the magnifier.
-              Press both mouse buttons simultaneously to view the image at its original scale.
+              长按激活按键即可开启放大镜。
+              同时按下鼠标左右键可以按原始比例查看图片。
             </p>
 
             <div class="settings__magnifier-config">
-              <!-- 基礎設定 -->
+              <!-- 基础设置 -->
               <label class="settings__label">
-                Activation Button:
+                激活按键：
                 <select
                   v-model="magnifierActivationButton.value"
                   class="settings__select"
                 >
-                  <option class="settings__option" :value="MouseButton.Left">Left Mouse Button</option>
-                  <option class="settings__option" :value="MouseButton.Right">Right Mouse Button</option>
+                  <option class="settings__option" :value="MouseButton.Left">鼠标左键</option>
+                  <option class="settings__option" :value="MouseButton.Right">鼠标右键</option>
                 </select>
               </label>
 
               <label class="settings__label ">
                 <ToggleSwitch v-model="magnifierToggleMode.value" />
-                {{ magnifierToggleMode.value ? 'Toggle Mode (click once to enable, click again to disable)' : 'Hold Mode (hold down to use)' }}
+                {{ magnifierToggleMode.value ? '切换模式（点一次开启，再点一次关闭）' : '按住模式（按住不放才生效）' }}
               </label>
 
               <label class="settings__label">
-                Default Scale:
+                默认缩放倍数：
                 <input
                   v-model.number="magnifierDefaultScale.value"
                   type="number"
@@ -281,7 +279,7 @@ function reload() {
               </label>
 
               <label class="settings__label">
-                Scale Step (Mouse Wheel):
+                缩放步进（滚轮）：
                 <input
                   v-model.number="magnifierScaleStep.value"
                   type="number"
@@ -293,7 +291,7 @@ function reload() {
               </label>
 
               <label class="settings__label">
-                Long-Press Threshold (ms):
+                长按判定阈值（毫秒）：
                 <input
                   v-model.number="magnifierLongPressThreshold.value"
                   type="number"
@@ -305,7 +303,7 @@ function reload() {
               </label>
 
               <label class="settings__label">
-                Mouse Sensitivity X:
+                鼠标灵敏度 X：
                 <input
                   v-model.number="magnifierSensitivityX.value"
                   type="number"
@@ -317,7 +315,7 @@ function reload() {
               </label>
 
               <label class="settings__label">
-                Mouse Sensitivity Y:
+                鼠标灵敏度 Y：
                 <input
                   v-model.number="magnifierSensitivityY.value"
                   type="number"
@@ -334,7 +332,7 @@ function reload() {
 
       <section class="settings-panel__section">
         <h2 class="settings-panel__section-name">
-          Galleries Enhancer
+          列表页增强
         </h2>
 
         <hr class="settings-panel__separator">
@@ -342,44 +340,44 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="infiniteScrollSwitch.value" />
           <h3 class="settings__name">
-            Infinite Scroll
+            无限滚动
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="scrollByRowSwitch.value" />
           <h3 class="settings__name">
-            Scroll by Row
+            按行滚动
           </h3>
           <span class="settings__notice">
-            *Synced with "Gallery Enhancer - Scroll by Row"
+            *与「画廊页增强 - 按行滚动」联动
           </span>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="highlightSwitch.value" />
           <h3 class="settings__name">
-            Highlight Downloaded Galleries
+            高亮已下载的画廊
           </h3>
           <div class="settings__intro">
-            Sets the background of downloaded galleries to black (ExHentai) or light yellow (e-hentai).
+            将已下载画廊的背景设为黑色（ExHentai）或浅黄色（E-Hentai）。
           </div>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="archiveButtonSwitch.value" />
           <h3 class="settings__name">
-            Insert Archiver Buttons
+            插入归档按钮
           </h3>
         </div>
 
         <div class="settings">
           <ToggleSwitch v-model="showHiddenGalleriesSwitch.value" />
           <h3 class="settings__name">
-            Show Hidden Galleries
+            显示已隐藏的画廊
           </h3>
           <div class="settings__intro">
-            When enabled, galleries hidden via the 🚫 button remain visible (with the icon at full opacity) so you can unhide them.
+            开启后，通过 🚫 按钮隐藏的画廊仍会显示（图标为完全不透明），方便你取消隐藏。
           </div>
         </div>
       </section>
@@ -396,7 +394,7 @@ function reload() {
         class="actions__button"
         @click="reload"
       >
-        Apply and Reload
+        应用并刷新
       </button>
     </div>
   </VueFinalModal>

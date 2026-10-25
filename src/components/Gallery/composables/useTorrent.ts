@@ -58,18 +58,18 @@ export function useTorrent(torrentInnerHtml: Ref<string>) {
 
       const button = document.createElement('input')
       button.type = 'button'
-      button.value = 'Copy Magnet'
+      button.value = '复制磁力链接'
       button.dataset.magnetButton = 'true'
       button.style.marginBottom = '4px'
 
       button.onclick = async () => {
         GM_setClipboard(magnet, 'text')
-        button.value = '✅ Copied'
+        button.value = '✅ 已复制'
         button.disabled = true
 
         setTimeout(() => {
           button.disabled = false
-          button.value = 'Copy Magnet'
+          button.value = '复制磁力链接'
         }, 1000)
       }
 
@@ -208,10 +208,11 @@ export function useTorrent(torrentInnerHtml: Ref<string>) {
       // Delete / Expunge（原站用 onclick + form.submit() 繞過 submit event）
       const expungeLink = popup.value.querySelector<HTMLElement>('[onclick*="expungeform"]')
       if (expungeLink) {
+        // 這裡比對的是站方連結上的英文文字，不能在地化
         const isDelete = expungeLink.textContent?.includes('Delete')
         const message = isDelete
-          ? 'Are you sure you wish to delete this torrent? This action cannot be undone.'
-          : 'Are you sure you wish to expunge this torrent? This action cannot be undone.'
+          ? '确定要删除这个种子吗？此操作无法撤销。'
+          : '确定要移除这个种子吗？此操作无法撤销。'
 
         expungeLink.removeAttribute('onclick')
         expungeLink.addEventListener('click', async event => {
