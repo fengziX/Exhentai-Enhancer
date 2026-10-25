@@ -6,11 +6,13 @@
 > 本项目基于 [sk2589822/Exhentai-Enhancer](https://github.com/sk2589822/Exhentai-Enhancer) v1.21.0 汉化，
 > 界面文案、提示信息与文档均已翻译为简体中文。功能逻辑未做改动；
 > 只有必须与站方交互的英文字符串（表单值、站方返回文案的匹配关键字）保留原文，改掉会导致下载/收藏失效。
+>
+> 汉化工作位于 `i18n/zh-cn` 分支，`master` 保持与上游一致。
 
 ## 安装方法
 
 1. 在浏览器中安装 [Tampermonkey](https://www.tampermonkey.net/)（油猴）。
-2. 点击安装本汉化版脚本 [exhentai-enhancer.user.js](https://github.com/fengziX/Exhentai-Enhancer/raw/master/dist/exhentai-enhancer.user.js)。
+2. 点击安装本汉化版脚本 [exhentai-enhancer.user.js](https://github.com/fengziX/Exhentai-Enhancer/raw/i18n/zh-cn/dist/exhentai-enhancer.user.js)。
 3. 打开 E-Hentai / ExHentai 任意画廊页，脚本会自动生效。
 
 ## 画廊页增强（Gallery Enhancer）
