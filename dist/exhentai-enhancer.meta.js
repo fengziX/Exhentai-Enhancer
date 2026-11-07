@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.23.1
+// @version            1.23.2
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)

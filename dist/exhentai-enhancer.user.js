@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.23.1
+// @version            1.23.2
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
@@ -6125,7 +6125,7 @@ div#bar3 {
 									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [
 										(0, vue.createTextVNode)(" *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求。"),
 										(0, vue.createElementVNode)("br"),
-										(0, vue.createTextVNode)(" *徽标底色按评分分档：≤ 2 星红色、2 ~ 4.5 星蓝色、≥ 4.5 星绿色（数字亮金色加粗）；鼠标悬停可看页数与星数。 ")
+										(0, vue.createTextVNode)(" *徽标按评分分档：≤ 2 星红底、2 ~ 4 星蓝底、≥ 4 星绿底白字、满分 5 星绿底亮金字；鼠标悬停可看页数与星数。 ")
 									], -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_42, [(0, vue.createVNode)(ToggleSwitch_default, {
@@ -6182,6 +6182,7 @@ div#bar3 {
 	var BADGE_CLASS = "enhancer-page-count";
 	var BADGE_LOW_CLASS = `${BADGE_CLASS}--low`;
 	var BADGE_HIGH_CLASS = `${BADGE_CLASS}--high`;
+	var BADGE_PERFECT_CLASS = `${BADGE_CLASS}--perfect`;
 	var isStyleInjected = false;
 	function injectStyle() {
 		if (isStyleInjected) return;
@@ -6203,13 +6204,16 @@ div#bar3 {
 .${BADGE_LOW_CLASS} {
   background-color: rgba(203, 68, 68, 0.42);
 }
-/* 綠底檔（>=4.5 星）保留綠底，數字改用亮金色 + 深色描邊 + 加粗：
-   深色（ExHentai）與淺色（E-Hentai）背景下都能一眼看出，描邊保證淺色底上不糊。 */
+/* 綠底檔（>=4 星）：白字；滿分 5 星再疊一層亮金加粗。
+   深色描邊讓白字／亮金字在 E-Hentai 的淡綠底上仍能讀，ExHentai 深色底上也都醒目。 */
 .${BADGE_CLASS}.${BADGE_HIGH_CLASS} {
   background-color: rgba(62, 168, 96, 0.42);
+  color: #fff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+.${BADGE_CLASS}.${BADGE_PERFECT_CLASS} {
   color: #ffd83d !important;
   font-weight: 700;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
 }
   `);
 	}
@@ -6250,8 +6254,10 @@ div#bar3 {
 			const badge = document.createElement("span");
 			badge.className = BADGE_CLASS;
 			badge.textContent = `${count}`;
-			if (stars !== null && stars >= 4.5) badge.classList.add(BADGE_HIGH_CLASS);
-			else if (stars !== null && stars <= 2) badge.classList.add(BADGE_LOW_CLASS);
+			if (stars !== null && stars >= 4) {
+				badge.classList.add(BADGE_HIGH_CLASS);
+				if (stars === 5) badge.classList.add(BADGE_PERFECT_CLASS);
+			} else if (stars !== null && stars <= 2) badge.classList.add(BADGE_LOW_CLASS);
 			badge.title = stars === null ? `共 ${count} 张图片` : `共 ${count} 张图片 · 评分 ${stars} 星`;
 			title.insertBefore(badge, title.firstChild);
 		}

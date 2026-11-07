@@ -20,6 +20,7 @@ const RATING_POSITION_RE = /background-position:\s*(-?\d+)px\s+(-?\d+)px/
 const BADGE_CLASS = 'enhancer-page-count'
 const BADGE_LOW_CLASS = `${BADGE_CLASS}--low`
 const BADGE_HIGH_CLASS = `${BADGE_CLASS}--high`
+const BADGE_PERFECT_CLASS = `${BADGE_CLASS}--perfect`
 
 let isStyleInjected = false
 
@@ -49,13 +50,16 @@ function injectStyle() {
 .${BADGE_LOW_CLASS} {
   background-color: rgba(203, 68, 68, 0.42);
 }
-/* 綠底檔（>=4.5 星）保留綠底，數字改用亮金色 + 深色描邊 + 加粗：
-   深色（ExHentai）與淺色（E-Hentai）背景下都能一眼看出，描邊保證淺色底上不糊。 */
+/* 綠底檔（>=4 星）：白字；滿分 5 星再疊一層亮金加粗。
+   深色描邊讓白字／亮金字在 E-Hentai 的淡綠底上仍能讀，ExHentai 深色底上也都醒目。 */
 .${BADGE_CLASS}.${BADGE_HIGH_CLASS} {
   background-color: rgba(62, 168, 96, 0.42);
+  color: #fff !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+.${BADGE_CLASS}.${BADGE_PERFECT_CLASS} {
   color: #ffd83d !important;
   font-weight: 700;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
 }
   `)
 }
@@ -146,9 +150,12 @@ export function appendPageCounts() {
     badge.className = BADGE_CLASS
     badge.textContent = `${count}`
 
-    // 高分優先、低分次之；2 星歸低分檔，4.5 星歸高分檔，其餘保持中性底色
-    if (stars !== null && stars >= 4.5) {
+    // 高分優先、低分次之：>=4 星綠底白字，滿分 5 星再加亮金；2 星及以下紅底，其餘中性藍底
+    if (stars !== null && stars >= 4) {
       badge.classList.add(BADGE_HIGH_CLASS)
+      if (stars === 5) {
+        badge.classList.add(BADGE_PERFECT_CLASS)
+      }
     } else if (stars !== null && stars <= 2) {
       badge.classList.add(BADGE_LOW_CLASS)
     }
