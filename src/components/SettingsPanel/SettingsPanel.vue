@@ -341,11 +341,12 @@ function reload() {
         <div class="settings">
           <ToggleSwitch v-model="showPageCountSwitch.value" />
           <h3 class="settings__name">
-            显示每个画廊的图片数量
+            显示每个画廊的图片数量（按评分着色）
           </h3>
-          <span class="settings__notice">
-            *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求
-          </span>
+          <div class="settings__intro">
+            *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求。<br>
+            *徽标底色按评分分档：≤ 2 星红色、2 ~ 4.5 星蓝色、≥ 4.5 星绿色；鼠标悬停可看页数与星数。
+          </div>
         </div>
 
         <div class="settings">

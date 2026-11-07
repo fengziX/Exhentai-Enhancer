@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.22.0
+// @version            1.23.0
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
@@ -6121,8 +6121,12 @@ div#bar3 {
 										modelValue: (0, vue.unref)(showPageCountSwitch).value,
 										"onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => (0, vue.unref)(showPageCountSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示每个画廊的图片数量 ", -1)),
-									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求 ", -1))
+									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示每个画廊的图片数量（按评分着色） ", -1)),
+									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [
+										(0, vue.createTextVNode)(" *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求。"),
+										(0, vue.createElementVNode)("br"),
+										(0, vue.createTextVNode)(" *徽标底色按评分分档：≤ 2 星红色、2 ~ 4.5 星蓝色、≥ 4.5 星绿色；鼠标悬停可看页数与星数。 ")
+									], -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_42, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(infiniteScrollSwitch).value,
@@ -6174,7 +6178,10 @@ div#bar3 {
 	});
 	var LIST_SELECTOR = "table.itg.gltm";
 	var PAGE_COUNT_RE = /^\s*(\d+)\s*(?:pages?|页|頁)\s*$/i;
+	var RATING_POSITION_RE = /background-position:\s*(-?\d+)px\s+(-?\d+)px/;
 	var BADGE_CLASS = "enhancer-page-count";
+	var BADGE_LOW_CLASS = `${BADGE_CLASS}--low`;
+	var BADGE_HIGH_CLASS = `${BADGE_CLASS}--high`;
 	var isStyleInjected = false;
 	function injectStyle() {
 		if (isStyleInjected) return;
@@ -6193,7 +6200,23 @@ div#bar3 {
   white-space: nowrap;
   user-select: none;
 }
+.${BADGE_LOW_CLASS} {
+  background-color: rgba(203, 68, 68, 0.42);
+}
+.${BADGE_HIGH_CLASS} {
+  background-color: rgba(62, 168, 96, 0.42);
+}
   `);
+	}
+	function getRatingStars(row) {
+		const match = getElement(".ir", row)?.getAttribute("style")?.match(RATING_POSITION_RE);
+		if (!match) return null;
+		const x = Number(match[1]);
+		const y = Number(match[2]);
+		const n = 5 + x / 16;
+		if (!Number.isInteger(n) || n < 0 || n > 5) return null;
+		const stars = (y === -1 ? 2 * n : 2 * n - 1) / 2;
+		return stars >= 0 && stars <= 5 ? stars : null;
 	}
 	function getPageCount(row) {
 		const primaryMatch = getElement(".glthumb .ir + div", row)?.textContent?.trim().match(PAGE_COUNT_RE);
@@ -6218,10 +6241,13 @@ div#bar3 {
 			if (!title) continue;
 			const count = getPageCount(row);
 			if (count === null) continue;
+			const stars = getRatingStars(row);
 			const badge = document.createElement("span");
 			badge.className = BADGE_CLASS;
 			badge.textContent = `${count}`;
-			badge.title = `共 ${count} 张图片`;
+			if (stars !== null && stars >= 4.5) badge.classList.add(BADGE_HIGH_CLASS);
+			else if (stars !== null && stars <= 2) badge.classList.add(BADGE_LOW_CLASS);
+			badge.title = stars === null ? `共 ${count} 张图片` : `共 ${count} 张图片 · 评分 ${stars} 星`;
 			title.insertBefore(badge, title.firstChild);
 		}
 	}

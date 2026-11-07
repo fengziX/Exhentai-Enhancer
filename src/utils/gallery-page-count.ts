@@ -14,7 +14,12 @@ const LIST_SELECTOR = 'table.itg.gltm'
 /** 站方文案：中文「195 页」、英文「195 pages」，兩種都要能吃 */
 const PAGE_COUNT_RE = /^\s*(\d+)\s*(?:pages?|页|頁)\s*$/i
 
+/** 評分精靈圖的偏移，例如 `background-position:-48px -1px` */
+const RATING_POSITION_RE = /background-position:\s*(-?\d+)px\s+(-?\d+)px/
+
 const BADGE_CLASS = 'enhancer-page-count'
+const BADGE_LOW_CLASS = `${BADGE_CLASS}--low`
+const BADGE_HIGH_CLASS = `${BADGE_CLASS}--high`
 
 let isStyleInjected = false
 
@@ -41,7 +46,42 @@ function injectStyle() {
   white-space: nowrap;
   user-select: none;
 }
+.${BADGE_LOW_CLASS} {
+  background-color: rgba(203, 68, 68, 0.42);
+}
+.${BADGE_HIGH_CLASS} {
+  background-color: rgba(62, 168, 96, 0.42);
+}
   `)
+}
+
+/**
+ * 從 `.ir` 的 CSS 精靈圖偏移反推星數。
+ *
+ * 列表頁不輸出精確分數（如 4.55），只輸出 0~5 星、0.5 步進的顯示值：
+ *   div.ir 寬 80px = 5 顆星 × 16px，x = -80 + ceil(halfSteps / 2) * 16
+ *   y = -1 是整星行，y = -21 是半星行
+ * opacity 與分數無關（票數／淡化），不參與換算。
+ *
+ * @returns 0~5 的星數，解析失敗時回傳 null
+ */
+function getRatingStars(row: HTMLElement): number | null {
+  const image = getElement<HTMLElement>('.ir', row)
+  const match = image?.getAttribute('style')?.match(RATING_POSITION_RE)
+  if (!match) {
+    return null
+  }
+
+  const x = Number(match[1])
+  const y = Number(match[2])
+  const n = 5 + x / 16
+  if (!Number.isInteger(n) || n < 0 || n > 5) {
+    return null
+  }
+
+  const halfSteps = y === -1 ? 2 * n : 2 * n - 1
+  const stars = halfSteps / 2
+  return stars >= 0 && stars <= 5 ? stars : null
 }
 
 function getPageCount(row: HTMLElement): number | null {
@@ -96,10 +136,21 @@ export function appendPageCounts() {
       continue
     }
 
+    const stars = getRatingStars(row)
     const badge = document.createElement('span')
     badge.className = BADGE_CLASS
     badge.textContent = `${count}`
-    badge.title = `共 ${count} 张图片`
+
+    // 高分優先、低分次之；2 星歸低分檔，4.5 星歸高分檔，其餘保持中性底色
+    if (stars !== null && stars >= 4.5) {
+      badge.classList.add(BADGE_HIGH_CLASS)
+    } else if (stars !== null && stars <= 2) {
+      badge.classList.add(BADGE_LOW_CLASS)
+    }
+
+    badge.title = stars === null
+      ? `共 ${count} 张图片`
+      : `共 ${count} 张图片 · 评分 ${stars} 星`
     title.insertBefore(badge, title.firstChild)
   }
 }
