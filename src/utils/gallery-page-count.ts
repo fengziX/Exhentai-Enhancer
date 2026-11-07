@@ -98,7 +98,7 @@ export function appendPageCounts() {
 
     const badge = document.createElement('span')
     badge.className = BADGE_CLASS
-    badge.textContent = `${count} 页`
+    badge.textContent = `${count}`
     badge.title = `共 ${count} 张图片`
     title.insertBefore(badge, title.firstChild)
   }
