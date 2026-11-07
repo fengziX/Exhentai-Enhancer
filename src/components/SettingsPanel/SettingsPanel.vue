@@ -23,6 +23,7 @@ import {
   showJapaneseTitle,
   highlightSwitch,
   showHiddenGalleriesSwitch,
+  showPageCountSwitch,
   magnifierSwitch,
   magnifierActivationButton,
   magnifierToggleMode,
@@ -336,6 +337,16 @@ function reload() {
         </h2>
 
         <hr class="settings-panel__separator">
+
+        <div class="settings">
+          <ToggleSwitch v-model="showPageCountSwitch.value" />
+          <h3 class="settings__name">
+            显示每个画廊的图片数量
+          </h3>
+          <span class="settings__notice">
+            *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求
+          </span>
+        </div>
 
         <div class="settings">
           <ToggleSwitch v-model="infiniteScrollSwitch.value" />

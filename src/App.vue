@@ -6,9 +6,10 @@ import GalleriesEnhancer from '@/components/Galleries/GalleriesEnhancer.vue'
 import GalleryEnhancer from '@/components/Gallery/GalleryEnhancer.vue'
 import MultipageViewerEnhancer from '@/components/MultiPageViewer/MultiPageViewerEnhancer.vue'
 import SettingsPanel from '@/components/SettingsPanel/SettingsPanel.vue'
-import { autoRedirectSwitch, multipageViewerEnhancerSwitch, showJapaneseTitle } from '@/utils/gm-variables'
+import { autoRedirectSwitch, multipageViewerEnhancerSwitch, showJapaneseTitle, showPageCountSwitch } from '@/utils/gm-variables'
 
 import { changeTitleToJapanese } from './utils/e-hentai-api'
+import { appendPageCounts } from './utils/gallery-page-count'
 
 const { href } = window.location
 
@@ -23,6 +24,12 @@ if (showJapaneseTitle.value) {
 }
 
 setCSS()
+
+// 「最小化 + 关注标签」是 table 佈局，不會命中 getEnhancer() 裡的 .itg.gld，
+// 所以這裡獨立處理；函數內部自己判斷頁面類型，其他頁面直接 return。
+if (showPageCountSwitch.value) {
+  appendPageCounts()
+}
 
 function getEnhancer() {
   const galleriesContainer = getElement('.itg.gld')

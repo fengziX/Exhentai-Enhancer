@@ -7,6 +7,7 @@ export const enum GMKey {
   ArchiveButton = 'archiveButton',
   Highlight = 'Highlight',
   ShowHiddenGalleries = 'ShowHiddenGalleries',
+  ShowPageCount = 'ShowPageCount',
 
   BetterPopup = 'BetterPopup',
   QuickArchiveDownloadMethod = 'QuickDownloadMethod',
@@ -122,6 +123,7 @@ export const infiniteScrollSwitch = reactive(new GMVariable<boolean>(GMKey.Infin
 export const archiveButtonSwitch = reactive(new GMVariable<boolean>(GMKey.ArchiveButton, true))
 export const highlightSwitch = reactive(new GMVariable<boolean>(GMKey.Highlight, true))
 export const showHiddenGalleriesSwitch = reactive(new GMVariable<boolean>(GMKey.ShowHiddenGalleries, false))
+export const showPageCountSwitch = reactive(new GMVariable<boolean>(GMKey.ShowPageCount, true))
 
 // Gallery enhancer
 export const scrollByRowSwitch = reactive(new GMVariable<boolean>(GMKey.ScrollByRow, true))
@@ -156,6 +158,7 @@ export async function initializeMonkeySwitches() {
     archiveButtonSwitch.initialize(),
     highlightSwitch.initialize(),
     showHiddenGalleriesSwitch.initialize(),
+    showPageCountSwitch.initialize(),
 
     scrollByRowSwitch.initialize(),
     betterPopupSwitch.initialize(),

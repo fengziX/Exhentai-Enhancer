@@ -2912,6 +2912,7 @@ This will fail in production.`);
 	var archiveButtonSwitch = (0, vue.reactive)(new GMVariable("archiveButton", true));
 	var highlightSwitch = (0, vue.reactive)(new GMVariable("Highlight", true));
 	var showHiddenGalleriesSwitch = (0, vue.reactive)(new GMVariable("ShowHiddenGalleries", false));
+	var showPageCountSwitch = (0, vue.reactive)(new GMVariable("ShowPageCount", true));
 	var scrollByRowSwitch = (0, vue.reactive)(new GMVariable("ScrollByRow", true));
 	var betterPopupSwitch = (0, vue.reactive)(new GMVariable("BetterPopup", true));
 	var quickArchiveDownloadMethod = (0, vue.reactive)(new GMVariable("QuickDownloadMethod", "Manual", LEGACY_ARCHIVE_DOWNLOAD_METHODS));
@@ -2937,6 +2938,7 @@ This will fail in production.`);
 			archiveButtonSwitch.initialize(),
 			highlightSwitch.initialize(),
 			showHiddenGalleriesSwitch.initialize(),
+			showPageCountSwitch.initialize(),
 			scrollByRowSwitch.initialize(),
 			betterPopupSwitch.initialize(),
 			quickArchiveDownloadMethod.initialize(),
@@ -5860,6 +5862,7 @@ div#bar3 {
 	var _hoisted_43 = { class: "settings" };
 	var _hoisted_44 = { class: "settings" };
 	var _hoisted_45 = { class: "settings" };
+	var _hoisted_46 = { class: "settings" };
 	var SettingsPanel_default = (0, vue.defineComponent)({
 		__name: "SettingsPanel",
 		setup(__props) {
@@ -5874,7 +5877,7 @@ div#bar3 {
 			return (_ctx, _cache) => {
 				return (0, vue.openBlock)(), (0, vue.createBlock)((0, vue.unref)(Ro), {
 					modelValue: isShow.value,
-					"onUpdate:modelValue": _cache[25] || (_cache[25] = ($event) => isShow.value = $event),
+					"onUpdate:modelValue": _cache[26] || (_cache[26] = ($event) => isShow.value = $event),
 					"overlay-transition": "vfm-fade",
 					class: "settings-panel-wrap",
 					"content-class": "settings-panel"
@@ -5882,32 +5885,32 @@ div#bar3 {
 					default: (0, vue.withCtx)(() => [
 						(0, vue.createElementVNode)("div", _hoisted_1, [
 							(0, vue.createElementVNode)("section", _hoisted_2, [
-								_cache[27] || (_cache[27] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 通用 ", -1)),
-								_cache[28] || (_cache[28] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
+								_cache[28] || (_cache[28] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 通用 ", -1)),
+								_cache[29] || (_cache[29] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_3, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(showJapaneseTitle).value,
 									"onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => (0, vue.unref)(showJapaneseTitle).value = $event)
-								}, null, 8, ["modelValue"]), _cache[26] || (_cache[26] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 将浏览器标签页标题改为日文 ", -1))])
+								}, null, 8, ["modelValue"]), _cache[27] || (_cache[27] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 将浏览器标签页标题改为日文 ", -1))])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_4, [
-								_cache[40] || (_cache[40] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 画廊页增强 ", -1)),
-								_cache[41] || (_cache[41] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
+								_cache[41] || (_cache[41] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 画廊页增强 ", -1)),
+								_cache[42] || (_cache[42] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_5, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(scrollByRowSwitch).value,
 										"onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => (0, vue.unref)(scrollByRowSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[29] || (_cache[29] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
-									_cache[30] || (_cache[30] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「列表页增强 - 按行滚动」联动 ", -1))
+									_cache[30] || (_cache[30] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
+									_cache[31] || (_cache[31] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「列表页增强 - 按行滚动」联动 ", -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_6, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(betterPopupSwitch).value,
 										"onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => (0, vue.unref)(betterPopupSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[37] || (_cache[37] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 内嵌弹窗 ", -1)),
+									_cache[38] || (_cache[38] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 内嵌弹窗 ", -1)),
 									(0, vue.createElementVNode)("div", _hoisted_7, [
-										_cache[31] || (_cache[31] = (0, vue.createElementVNode)("span", null, " 点击「归档下载」时的行为： ", -1)),
+										_cache[32] || (_cache[32] = (0, vue.createElementVNode)("span", null, " 点击「归档下载」时的行为： ", -1)),
 										(0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => (0, vue.unref)(quickArchiveDownloadMethod).value = $event),
 											class: "settings__select"
@@ -5945,8 +5948,8 @@ div#bar3 {
 												value: (0, vue.unref)(ArchiveDownloadMethod).Direct_Resample
 											}, " 直接下载重采样分辨率 ", 8, _hoisted_15)
 										], 512), [[vue.vModelSelect, (0, vue.unref)(quickArchiveDownloadMethod).value]]),
-										_cache[32] || (_cache[32] = (0, vue.createElementVNode)("p", null, " *注意：并非每个画廊都提供所有 H@H 分辨率。当所选分辨率不可用时，会改为打开弹窗。 ", -1)),
-										_cache[33] || (_cache[33] = (0, vue.createElementVNode)("p", null, [
+										_cache[33] || (_cache[33] = (0, vue.createElementVNode)("p", null, " *注意：并非每个画廊都提供所有 H@H 分辨率。当所选分辨率不可用时，会改为打开弹窗。 ", -1)),
+										_cache[34] || (_cache[34] = (0, vue.createElementVNode)("p", null, [
 											(0, vue.createTextVNode)(" *注意：如果你改过 Archiver 设置，必须先到设置页面把它改回「Manual Select, Manual Start (Default)」（手动选择、手动开始）： "),
 											(0, vue.createElementVNode)("a", {
 												class: "settings__link",
@@ -5962,7 +5965,7 @@ div#bar3 {
 												rel: "noreferrer noopener"
 											}, " ExHentai ")
 										], -1)),
-										_cache[34] || (_cache[34] = (0, vue.createElementVNode)("span", null, " 上次的归档会话仍然有效时的行为： ", -1)),
+										_cache[35] || (_cache[35] = (0, vue.createElementVNode)("span", null, " 上次的归档会话仍然有效时的行为： ", -1)),
 										(0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => (0, vue.unref)(archiveSessionAction).value = $event),
 											class: "settings__select",
@@ -5985,50 +5988,50 @@ div#bar3 {
 												value: (0, vue.unref)(ArchiveSessionAction).ShowCancelButton
 											}, " 在「归档下载」下方新增「使归档失效」按钮 ", 8, _hoisted_20)
 										], 8, _hoisted_16), [[vue.vModelSelect, (0, vue.unref)(archiveSessionAction).value]]),
-										_cache[35] || (_cache[35] = (0, vue.createElementVNode)("p", null, " *仅在上一项设置为「直接下载」类方式时生效。 ", -1)),
-										_cache[36] || (_cache[36] = (0, vue.createElementVNode)("p", null, " *「先取消会话，再下载」会让已经付费解锁的归档会话失效，因此每次下载都需要重新消耗 GP。 ", -1))
+										_cache[36] || (_cache[36] = (0, vue.createElementVNode)("p", null, " *仅在上一项设置为「直接下载」类方式时生效。 ", -1)),
+										_cache[37] || (_cache[37] = (0, vue.createElementVNode)("p", null, " *「先取消会话，再下载」会让已经付费解锁的归档会话失效，因此每次下载都需要重新消耗 GP。 ", -1))
 									])
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_21, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(quickTorrentDownloadSwitch).value,
 									"onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => (0, vue.unref)(quickTorrentDownloadSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[38] || (_cache[38] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 仅有一个种子时直接下载 ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[39] || (_cache[39] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 仅有一个种子时直接下载 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_22, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(loadAllGalleryImagesSwitch).value,
 									"onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => (0, vue.unref)(loadAllGalleryImagesSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[39] || (_cache[39] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 加载画廊内所有图片 ", -1))])
+								}, null, 8, ["modelValue"]), _cache[40] || (_cache[40] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 加载画廊内所有图片 ", -1))])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_23, [
-								_cache[55] || (_cache[55] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 多页查看器增强 ", -1)),
-								_cache[56] || (_cache[56] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
+								_cache[56] || (_cache[56] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 多页查看器增强 ", -1)),
+								_cache[57] || (_cache[57] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
 								(0, vue.createElementVNode)("div", _hoisted_24, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(multipageViewerEnhancerSwitch).value,
 									"onUpdate:modelValue": _cache[7] || (_cache[7] = ($event) => (0, vue.unref)(multipageViewerEnhancerSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[42] || (_cache[42] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 多页查看器增强 ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[43] || (_cache[43] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 多页查看器增强 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_25, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(preventImageRemovalSwitch).value,
 										"onUpdate:modelValue": _cache[8] || (_cache[8] = ($event) => (0, vue.unref)(preventImageRemovalSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[43] || (_cache[43] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 阻止图片被移除 ", -1)),
-									_cache[44] || (_cache[44] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [(0, vue.createElementVNode)("p", null, " ExHentai 内置脚本会移除距离当前滚动位置较远的图片。 往回滚动到已被移除的图片时可能会闪烁，因为即使图片已经缓存，浏览器仍需重新渲染它。 ")], -1))
+									_cache[44] || (_cache[44] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 阻止图片被移除 ", -1)),
+									_cache[45] || (_cache[45] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [(0, vue.createElementVNode)("p", null, " ExHentai 内置脚本会移除距离当前滚动位置较远的图片。 往回滚动到已被移除的图片时可能会闪烁，因为即使图片已经缓存，浏览器仍需重新渲染它。 ")], -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_26, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(changePageByWheelAnyWhereSwitch).value,
 									"onUpdate:modelValue": _cache[9] || (_cache[9] = ($event) => (0, vue.unref)(changePageByWheelAnyWhereSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[45] || (_cache[45] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 在任意位置滚动滚轮即可翻页 ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[46] || (_cache[46] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 在任意位置滚动滚轮即可翻页 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_27, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(autoRedirectSwitch).value,
 									"onUpdate:modelValue": _cache[10] || (_cache[10] = ($event) => (0, vue.unref)(autoRedirectSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[46] || (_cache[46] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 自动跳转到多页查看器 ", -1))]),
+								}, null, 8, ["modelValue"]), _cache[47] || (_cache[47] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 自动跳转到多页查看器 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_28, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(magnifierSwitch).value,
 										"onUpdate:modelValue": _cache[11] || (_cache[11] = ($event) => (0, vue.unref)(magnifierSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[54] || (_cache[54] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 图片放大镜 ", -1)),
-									(0, vue.createElementVNode)("div", _hoisted_29, [_cache[53] || (_cache[53] = (0, vue.createElementVNode)("p", null, " 长按激活按键即可开启放大镜。 同时按下鼠标左右键可以按原始比例查看图片。 ", -1)), (0, vue.createElementVNode)("div", _hoisted_30, [
-										(0, vue.createElementVNode)("label", _hoisted_31, [_cache[47] || (_cache[47] = (0, vue.createTextVNode)(" 激活按键： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("select", {
+									_cache[55] || (_cache[55] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 图片放大镜 ", -1)),
+									(0, vue.createElementVNode)("div", _hoisted_29, [_cache[54] || (_cache[54] = (0, vue.createElementVNode)("p", null, " 长按激活按键即可开启放大镜。 同时按下鼠标左右键可以按原始比例查看图片。 ", -1)), (0, vue.createElementVNode)("div", _hoisted_30, [
+										(0, vue.createElementVNode)("label", _hoisted_31, [_cache[48] || (_cache[48] = (0, vue.createTextVNode)(" 激活按键： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("select", {
 											"onUpdate:modelValue": _cache[12] || (_cache[12] = ($event) => (0, vue.unref)(magnifierActivationButton).value = $event),
 											class: "settings__select"
 										}, [(0, vue.createElementVNode)("option", {
@@ -6042,7 +6045,7 @@ div#bar3 {
 											modelValue: (0, vue.unref)(magnifierToggleMode).value,
 											"onUpdate:modelValue": _cache[13] || (_cache[13] = ($event) => (0, vue.unref)(magnifierToggleMode).value = $event)
 										}, null, 8, ["modelValue"]), (0, vue.createTextVNode)(" " + (0, vue.toDisplayString)((0, vue.unref)(magnifierToggleMode).value ? "切换模式（点一次开启，再点一次关闭）" : "按住模式（按住不放才生效）"), 1)]),
-										(0, vue.createElementVNode)("label", _hoisted_35, [_cache[48] || (_cache[48] = (0, vue.createTextVNode)(" 默认缩放倍数： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_35, [_cache[49] || (_cache[49] = (0, vue.createTextVNode)(" 默认缩放倍数： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[14] || (_cache[14] = ($event) => (0, vue.unref)(magnifierDefaultScale).value = $event),
 											type: "number",
 											min: "1.1",
@@ -6055,7 +6058,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_36, [_cache[49] || (_cache[49] = (0, vue.createTextVNode)(" 缩放步进（滚轮）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_36, [_cache[50] || (_cache[50] = (0, vue.createTextVNode)(" 缩放步进（滚轮）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[15] || (_cache[15] = ($event) => (0, vue.unref)(magnifierScaleStep).value = $event),
 											type: "number",
 											min: "0.05",
@@ -6068,7 +6071,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_37, [_cache[50] || (_cache[50] = (0, vue.createTextVNode)(" 长按判定阈值（毫秒）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_37, [_cache[51] || (_cache[51] = (0, vue.createTextVNode)(" 长按判定阈值（毫秒）： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[16] || (_cache[16] = ($event) => (0, vue.unref)(magnifierLongPressThreshold).value = $event),
 											type: "number",
 											min: "50",
@@ -6081,7 +6084,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_38, [_cache[51] || (_cache[51] = (0, vue.createTextVNode)(" 鼠标灵敏度 X： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_38, [_cache[52] || (_cache[52] = (0, vue.createTextVNode)(" 鼠标灵敏度 X： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[17] || (_cache[17] = ($event) => (0, vue.unref)(magnifierSensitivityX).value = $event),
 											type: "number",
 											min: "0.5",
@@ -6094,7 +6097,7 @@ div#bar3 {
 											void 0,
 											{ number: true }
 										]])]),
-										(0, vue.createElementVNode)("label", _hoisted_39, [_cache[52] || (_cache[52] = (0, vue.createTextVNode)(" 鼠标灵敏度 Y： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
+										(0, vue.createElementVNode)("label", _hoisted_39, [_cache[53] || (_cache[53] = (0, vue.createTextVNode)(" 鼠标灵敏度 Y： ", -1)), (0, vue.withDirectives)((0, vue.createElementVNode)("input", {
 											"onUpdate:modelValue": _cache[18] || (_cache[18] = ($event) => (0, vue.unref)(magnifierSensitivityY).value = $event),
 											type: "number",
 											min: "0.5",
@@ -6111,45 +6114,53 @@ div#bar3 {
 								])
 							]),
 							(0, vue.createElementVNode)("section", _hoisted_40, [
-								_cache[65] || (_cache[65] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 列表页增强 ", -1)),
-								_cache[66] || (_cache[66] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
-								(0, vue.createElementVNode)("div", _hoisted_41, [(0, vue.createVNode)(ToggleSwitch_default, {
-									modelValue: (0, vue.unref)(infiniteScrollSwitch).value,
-									"onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => (0, vue.unref)(infiniteScrollSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[57] || (_cache[57] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 无限滚动 ", -1))]),
-								(0, vue.createElementVNode)("div", _hoisted_42, [
+								_cache[68] || (_cache[68] = (0, vue.createElementVNode)("h2", { class: "settings-panel__section-name" }, " 列表页增强 ", -1)),
+								_cache[69] || (_cache[69] = (0, vue.createElementVNode)("hr", { class: "settings-panel__separator" }, null, -1)),
+								(0, vue.createElementVNode)("div", _hoisted_41, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
-										modelValue: (0, vue.unref)(scrollByRowSwitch).value,
-										"onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => (0, vue.unref)(scrollByRowSwitch).value = $event)
+										modelValue: (0, vue.unref)(showPageCountSwitch).value,
+										"onUpdate:modelValue": _cache[19] || (_cache[19] = ($event) => (0, vue.unref)(showPageCountSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
-									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「画廊页增强 - 按行滚动」联动 ", -1))
+									_cache[58] || (_cache[58] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示每个画廊的图片数量 ", -1)),
+									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求 ", -1))
 								]),
+								(0, vue.createElementVNode)("div", _hoisted_42, [(0, vue.createVNode)(ToggleSwitch_default, {
+									modelValue: (0, vue.unref)(infiniteScrollSwitch).value,
+									"onUpdate:modelValue": _cache[20] || (_cache[20] = ($event) => (0, vue.unref)(infiniteScrollSwitch).value = $event)
+								}, null, 8, ["modelValue"]), _cache[60] || (_cache[60] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 无限滚动 ", -1))]),
 								(0, vue.createElementVNode)("div", _hoisted_43, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
-										modelValue: (0, vue.unref)(highlightSwitch).value,
-										"onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => (0, vue.unref)(highlightSwitch).value = $event)
+										modelValue: (0, vue.unref)(scrollByRowSwitch).value,
+										"onUpdate:modelValue": _cache[21] || (_cache[21] = ($event) => (0, vue.unref)(scrollByRowSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[60] || (_cache[60] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 高亮已下载的画廊 ", -1)),
-									_cache[61] || (_cache[61] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 将已下载画廊的背景设为黑色（ExHentai）或浅黄色（E-Hentai）。 ", -1))
+									_cache[61] || (_cache[61] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 按行滚动 ", -1)),
+									_cache[62] || (_cache[62] = (0, vue.createElementVNode)("span", { class: "settings__notice" }, " *与「画廊页增强 - 按行滚动」联动 ", -1))
 								]),
-								(0, vue.createElementVNode)("div", _hoisted_44, [(0, vue.createVNode)(ToggleSwitch_default, {
+								(0, vue.createElementVNode)("div", _hoisted_44, [
+									(0, vue.createVNode)(ToggleSwitch_default, {
+										modelValue: (0, vue.unref)(highlightSwitch).value,
+										"onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => (0, vue.unref)(highlightSwitch).value = $event)
+									}, null, 8, ["modelValue"]),
+									_cache[63] || (_cache[63] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 高亮已下载的画廊 ", -1)),
+									_cache[64] || (_cache[64] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 将已下载画廊的背景设为黑色（ExHentai）或浅黄色（E-Hentai）。 ", -1))
+								]),
+								(0, vue.createElementVNode)("div", _hoisted_45, [(0, vue.createVNode)(ToggleSwitch_default, {
 									modelValue: (0, vue.unref)(archiveButtonSwitch).value,
-									"onUpdate:modelValue": _cache[22] || (_cache[22] = ($event) => (0, vue.unref)(archiveButtonSwitch).value = $event)
-								}, null, 8, ["modelValue"]), _cache[62] || (_cache[62] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 插入归档按钮 ", -1))]),
-								(0, vue.createElementVNode)("div", _hoisted_45, [
+									"onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => (0, vue.unref)(archiveButtonSwitch).value = $event)
+								}, null, 8, ["modelValue"]), _cache[65] || (_cache[65] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 插入归档按钮 ", -1))]),
+								(0, vue.createElementVNode)("div", _hoisted_46, [
 									(0, vue.createVNode)(ToggleSwitch_default, {
 										modelValue: (0, vue.unref)(showHiddenGalleriesSwitch).value,
-										"onUpdate:modelValue": _cache[23] || (_cache[23] = ($event) => (0, vue.unref)(showHiddenGalleriesSwitch).value = $event)
+										"onUpdate:modelValue": _cache[24] || (_cache[24] = ($event) => (0, vue.unref)(showHiddenGalleriesSwitch).value = $event)
 									}, null, 8, ["modelValue"]),
-									_cache[63] || (_cache[63] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示已隐藏的画廊 ", -1)),
-									_cache[64] || (_cache[64] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 开启后，通过 🚫 按钮隐藏的画廊仍会显示（图标为完全不透明），方便你取消隐藏。 ", -1))
+									_cache[66] || (_cache[66] = (0, vue.createElementVNode)("h3", { class: "settings__name" }, " 显示已隐藏的画廊 ", -1)),
+									_cache[67] || (_cache[67] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, " 开启后，通过 🚫 按钮隐藏的画廊仍会显示（图标为完全不透明），方便你取消隐藏。 ", -1))
 								])
 							])
 						]),
 						(0, vue.createElementVNode)("span", {
 							class: "settings-panel__close-button",
-							onClick: _cache[24] || (_cache[24] = ($event) => isShow.value = false)
+							onClick: _cache[25] || (_cache[25] = ($event) => isShow.value = false)
 						}, [(0, vue.createVNode)(CrossButton_default)]),
 						(0, vue.createElementVNode)("div", { class: "actions" }, [(0, vue.createElementVNode)("button", {
 							class: "actions__button",
@@ -6161,6 +6172,59 @@ div#bar3 {
 			};
 		}
 	});
+	var LIST_SELECTOR = "table.itg.gltm";
+	var PAGE_COUNT_RE = /^\s*(\d+)\s*(?:pages?|页|頁)\s*$/i;
+	var BADGE_CLASS = "enhancer-page-count";
+	var isStyleInjected = false;
+	function injectStyle() {
+		if (isStyleInjected) return;
+		isStyleInjected = true;
+		_GM_addStyle(`
+.${BADGE_CLASS} {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 3px;
+  background-color: rgba(95, 169, 207, 0.28);
+  color: inherit;
+  font-size: 11px;
+  line-height: 18px;
+  vertical-align: middle;
+  white-space: nowrap;
+  user-select: none;
+}
+  `);
+	}
+	function getPageCount(row) {
+		const primaryMatch = getElement(".glthumb .ir + div", row)?.textContent?.trim().match(PAGE_COUNT_RE);
+		if (primaryMatch) return Number(primaryMatch[1]);
+		const candidates = getElements(".glthumb div, .glhide div", row);
+		for (const node of candidates ?? []) {
+			const text = node.textContent?.trim() ?? "";
+			if (text.length > 24) continue;
+			const match = text.match(PAGE_COUNT_RE);
+			if (match) return Number(match[1]);
+		}
+		return null;
+	}
+	function appendPageCounts() {
+		const table = getElement(LIST_SELECTOR);
+		if (!table) return;
+		injectStyle();
+		const rows = getElements("tr", table);
+		for (const row of rows ?? []) {
+			if (getElement(`.${BADGE_CLASS}`, row)) continue;
+			const titleCell = getElement("td.gl3m.glname", row);
+			if (!titleCell) continue;
+			const count = getPageCount(row);
+			if (count === null) continue;
+			const badge = document.createElement("span");
+			badge.className = BADGE_CLASS;
+			badge.textContent = `${count} 页`;
+			badge.title = `共 ${count} 张图片`;
+			titleCell.insertBefore(badge, titleCell.firstChild);
+		}
+	}
 	var App_default = (0, vue.defineComponent)({
 		__name: "App",
 		setup(__props) {
@@ -6169,6 +6233,7 @@ div#bar3 {
 			if (autoRedirectSwitch.value) redirectIfSinglePageViewer();
 			if (showJapaneseTitle.value) changeTitleToJapanese();
 			setCSS();
+			if (showPageCountSwitch.value) appendPageCounts();
 			function getEnhancer() {
 				if (getElement(".itg.gld")) return GalleriesEnhancer_default;
 				if (/https:\/\/e[-x]hentai\.org\/g\/\w+\/\w+/.test(href)) return GalleryEnhancer_default;
