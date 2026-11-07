@@ -24,7 +24,9 @@ function injectStyle() {
   }
   isStyleInjected = true
 
-  // 半透明底色 + inherit 文字色，讓 ExHentai 深色與 E-Hentai 淺色背景都能讀
+  // 站方 .gl3m>a>div 是固定 18px 高、overflow:hidden 的單行容器，
+  // 徽標必須插進它「內部」才和標題同一行；插在 <a> 之前會多出一個塊級行，把標題頂到第二行。
+  // 另外 .glname a :not(.glink) 會把 a 內的非 .glink 後代染成暗紅，這裡用 !important 蓋掉。
   gmAddStyle(`
 .${BADGE_CLASS} {
   display: inline-block;
@@ -32,7 +34,7 @@ function injectStyle() {
   padding: 0 6px;
   border-radius: 3px;
   background-color: rgba(95, 169, 207, 0.28);
-  color: inherit;
+  color: inherit !important;
   font-size: 11px;
   line-height: 18px;
   vertical-align: middle;
@@ -82,9 +84,10 @@ export function appendPageCounts() {
       continue
     }
 
-    // 插在標題儲存格的第一個子元素之前，不動表格欄位數量與 hover 事件
-    const titleCell = getElement<HTMLElement>('td.gl3m.glname', row)
-    if (!titleCell) {
+    // 插進 .glink 內部首位：它是 .gl3m > a > div 的單行容器（height:18px; overflow:hidden），
+    // inline-block 徽標與標題文字共用同一行，不會新增塊級行、也不動表格欄位數量。
+    const title = getElement<HTMLElement>('td.gl3m.glname .glink', row)
+    if (!title) {
       continue
     }
 
@@ -97,6 +100,6 @@ export function appendPageCounts() {
     badge.className = BADGE_CLASS
     badge.textContent = `${count} 页`
     badge.title = `共 ${count} 张图片`
-    titleCell.insertBefore(badge, titleCell.firstChild)
+    title.insertBefore(badge, title.firstChild)
   }
 }

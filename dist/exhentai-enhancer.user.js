@@ -6186,7 +6186,7 @@ div#bar3 {
   padding: 0 6px;
   border-radius: 3px;
   background-color: rgba(95, 169, 207, 0.28);
-  color: inherit;
+  color: inherit !important;
   font-size: 11px;
   line-height: 18px;
   vertical-align: middle;
@@ -6214,15 +6214,15 @@ div#bar3 {
 		const rows = getElements("tr", table);
 		for (const row of rows ?? []) {
 			if (getElement(`.${BADGE_CLASS}`, row)) continue;
-			const titleCell = getElement("td.gl3m.glname", row);
-			if (!titleCell) continue;
+			const title = getElement("td.gl3m.glname .glink", row);
+			if (!title) continue;
 			const count = getPageCount(row);
 			if (count === null) continue;
 			const badge = document.createElement("span");
 			badge.className = BADGE_CLASS;
 			badge.textContent = `${count} 页`;
 			badge.title = `共 ${count} 张图片`;
-			titleCell.insertBefore(badge, titleCell.firstChild);
+			title.insertBefore(badge, title.firstChild);
 		}
 	}
 	var App_default = (0, vue.defineComponent)({
