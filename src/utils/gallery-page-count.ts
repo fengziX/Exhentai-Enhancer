@@ -49,8 +49,13 @@ function injectStyle() {
 .${BADGE_LOW_CLASS} {
   background-color: rgba(203, 68, 68, 0.42);
 }
-.${BADGE_HIGH_CLASS} {
+/* 綠底檔（>=4.5 星）保留綠底，數字改用亮金色 + 深色描邊 + 加粗：
+   深色（ExHentai）與淺色（E-Hentai）背景下都能一眼看出，描邊保證淺色底上不糊。 */
+.${BADGE_CLASS}.${BADGE_HIGH_CLASS} {
   background-color: rgba(62, 168, 96, 0.42);
+  color: #ffd83d !important;
+  font-weight: 700;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
 }
   `)
 }

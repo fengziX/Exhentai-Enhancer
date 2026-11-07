@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.23.0
+// @version            1.23.1
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
@@ -6125,7 +6125,7 @@ div#bar3 {
 									_cache[59] || (_cache[59] = (0, vue.createElementVNode)("div", { class: "settings__intro" }, [
 										(0, vue.createTextVNode)(" *仅适用于「最小化 + 关注标签」/「最小化」列表模式；直接读取页面已有数据，不发送额外请求。"),
 										(0, vue.createElementVNode)("br"),
-										(0, vue.createTextVNode)(" *徽标底色按评分分档：≤ 2 星红色、2 ~ 4.5 星蓝色、≥ 4.5 星绿色；鼠标悬停可看页数与星数。 ")
+										(0, vue.createTextVNode)(" *徽标底色按评分分档：≤ 2 星红色、2 ~ 4.5 星蓝色、≥ 4.5 星绿色（数字亮金色加粗）；鼠标悬停可看页数与星数。 ")
 									], -1))
 								]),
 								(0, vue.createElementVNode)("div", _hoisted_42, [(0, vue.createVNode)(ToggleSwitch_default, {
@@ -6203,8 +6203,13 @@ div#bar3 {
 .${BADGE_LOW_CLASS} {
   background-color: rgba(203, 68, 68, 0.42);
 }
-.${BADGE_HIGH_CLASS} {
+/* 綠底檔（>=4.5 星）保留綠底，數字改用亮金色 + 深色描邊 + 加粗：
+   深色（ExHentai）與淺色（E-Hentai）背景下都能一眼看出，描邊保證淺色底上不糊。 */
+.${BADGE_CLASS}.${BADGE_HIGH_CLASS} {
   background-color: rgba(62, 168, 96, 0.42);
+  color: #ffd83d !important;
+  font-weight: 700;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.75);
 }
   `);
 	}
