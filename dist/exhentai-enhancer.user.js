@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.23.2
+// @version            1.23.3
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
@@ -3944,6 +3944,17 @@ This will fail in production.`);
 	function getGalleryID(url) {
 		return Number(new URL(url).searchParams.get("gid"));
 	}
+	function submitHathdlRequest(form, resolution) {
+		let input = getElement("input[name=\"hathdl_xres\"]", form);
+		if (!input) {
+			input = document.createElement("input");
+			input.type = "hidden";
+			input.name = "hathdl_xres";
+			form.appendChild(input);
+		}
+		input.value = resolution;
+		form.submit();
+	}
 	function useArchive() {
 		const toast = useToast();
 		const { archiveInnerHtml } = usePopups();
@@ -3954,55 +3965,23 @@ This will fail in production.`);
 				logger.error("hentai@Home Links not found.");
 				return;
 			}
-			const postUrl = getElement("#hathdl_form")?.getAttribute("action");
-			if (!postUrl) {
-				logger.error("postUrl not found.");
+			const form = getElement("#hathdl_form");
+			const postUrl = form?.getAttribute("action");
+			if (!form || !postUrl) {
+				logger.error("hathdl form not found.");
 				return;
 			}
 			for (const link of hentaiAtHomeLinks) {
-				const resolution = link.getAttribute("onclick")?.split("'")?.[1] || HAH_ORIGINAL_RESOLUTION;
-				link.removeAttribute("onclick");
+				const resolution = link.getAttribute("onclick")?.match(/'(org|\d+)'/)?.[1];
+				if (!resolution) continue;
 				link.setAttribute(HAH_RESOLUTION_ATTRIBUTE, resolution);
-				link.addEventListener("click", async (event) => {
+				link.removeAttribute("onclick");
+				link.addEventListener("click", (event) => {
 					event.preventDefault();
-					link.classList.add("is-fetching");
-					const response = getElement("#db", await sendDownloadRequest(postUrl, resolution));
-					logger.log(response);
-					const parsedResponse = parseResponse(response, logger);
-					if (parsedResponse) {
-						link.classList.remove("is-fetching");
-						if (/download has been queued/.test(parsedResponse)) {
-							toast.success(`已加入下载队列：${parsedResponse}`);
-							link.classList.add("is-finished");
-						} else toast.error(`下载请求失败：${parsedResponse}`);
-					}
 					setAsDownloaded(getGalleryID(postUrl));
+					submitHathdlRequest(form, resolution);
 				});
 			}
-		}
-		async function sendDownloadRequest(postUrl, resolution) {
-			const formData = new FormData();
-			formData.append("hathdl_xres", resolution);
-			return await getDoc(postUrl, {
-				method: "POST",
-				body: formData
-			});
-		}
-		function parseResponse(response, logger) {
-			if (!response) {
-				logger.error("Failed to get response.");
-				return null;
-			}
-			if (!response.innerHTML) {
-				logger.error("Failed to get response innerHTML.");
-				return null;
-			}
-			const result = response.innerHTML.match(/(?<=<p>)(.*?)(?=<\/p>)/g);
-			if (!result) {
-				logger.error("Failed to parse response.");
-				return null;
-			}
-			return result.join("\n").replace(/<strong>#\d+<\/strong>/, "");
 		}
 		async function startDirectDownload(url, dltype) {
 			const result = await requestDirectDownload(url, dltype);

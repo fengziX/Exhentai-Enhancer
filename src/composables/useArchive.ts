@@ -169,16 +169,38 @@ function getGalleryID(url: string) {
   return Number(new URL(url).searchParams.get('gid'))
 }
 
+/**
+ * 依站方原本的方式提交 H@H 下載請求
+ *
+ * 站方的連結是 `onclick="...('1920')"`，內部就是「把解析度填進 #hathdl_form 後提交」，
+ * 由瀏覽器帶著表單跳到 archiver 的結果頁。popup 是搬 `#db` 的 innerHTML 過來，
+ * 拿不到 archiver 頁面上的那段 script，所以這裡只補「填欄位 + submit」這一步，
+ * 請求本身、跳轉與結果頁全部交給站方原生流程
+ */
+function submitHathdlRequest(form: HTMLFormElement, resolution: string) {
+  let input = getElement<HTMLInputElement>('input[name="hathdl_xres"]', form)
+
+  if (!input) {
+    input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = 'hathdl_xres'
+    form.appendChild(input)
+  }
+
+  input.value = resolution
+  form.submit()
+}
+
 export function useArchive() {
   const toast = useToast()
 
   const { archiveInnerHtml } = usePopups()
 
   /**
-   * 重新實作 Hentai@Home 的下載事件
+   * 綁定 H@H 的解析度連結
    *
-   * 原本會開一個新的頁面，裡面有 submit form 的 function
-   * 因為改用 preload 就沒辦法呼叫該 function，所以這邊要補實作
+   * 不做任何優化：不加沙漏、不 toast、不自己送 request，
+   * 點擊後就是站方原生行為（表單提交 → 結果頁顯示「已加入下載佇列」）
    */
   function setHentaiAtHomeEvent() {
     const logger = new Logger('Hentai At Home Event')
@@ -189,74 +211,32 @@ export function useArchive() {
       return
     }
 
-    const postUrl = getElement('#hathdl_form')?.getAttribute('action')
-    if (!postUrl) {
-      logger.error('postUrl not found.')
+    const form = getElement<HTMLFormElement>('#hathdl_form')
+    const postUrl = form?.getAttribute('action')
+    if (!form || !postUrl) {
+      logger.error('hathdl form not found.')
       return
     }
 
     for (const link of hentaiAtHomeLinks) {
-      const resolution = link.getAttribute('onclick')?.split('\'')?.[1] || HAH_ORIGINAL_RESOLUTION
-      link.removeAttribute('onclick')
+      // 只認 `xxx('1920')` / `xxx('org')` 這種帶解析度的 onclick，其餘連結不動
+      const resolution = link.getAttribute('onclick')?.match(/'(org|\d+)'/)?.[1]
+      if (!resolution) {
+        continue
+      }
+
       link.setAttribute(HAH_RESOLUTION_ATTRIBUTE, resolution)
 
-      link.addEventListener('click', async event => {
+      // 站方的 onclick 呼叫的是 archiver 頁面上的全域函數，popup 裡沒有那份 script
+      link.removeAttribute('onclick')
+
+      link.addEventListener('click', event => {
         event.preventDefault()
 
-        link.classList.add('is-fetching')
-
-        const doc = await sendDownloadRequest(postUrl, resolution)
-        const response = getElement('#db', doc)
-        logger.log(response)
-
-        const parsedResponse = parseResponse(response, logger)
-        if (parsedResponse) {
-          link.classList.remove('is-fetching')
-
-          // 站方回應固定是英文，用英文關鍵字判斷是否排隊成功，訊息本文原樣保留
-          if (/download has been queued/.test(parsedResponse)) {
-            toast.success(`已加入下载队列：${parsedResponse}`)
-            link.classList.add('is-finished')
-          } else {
-            toast.error(`下载请求失败：${parsedResponse}`)
-          }
-        }
-
         setAsDownloaded(getGalleryID(postUrl))
+        submitHathdlRequest(form, resolution)
       })
     }
-  }
-
-  async function sendDownloadRequest(postUrl: string, resolution: string) {
-    const formData = new FormData()
-    formData.append('hathdl_xres', resolution)
-    const doc = await getDoc(postUrl, {
-      method: 'POST',
-      body: formData,
-    })
-
-    return doc
-  }
-
-  function parseResponse(response: HTMLElement | null, logger: Logger) {
-    if (!response) {
-      logger.error('Failed to get response.')
-      return null
-    }
-
-    if (!response.innerHTML) {
-      logger.error('Failed to get response innerHTML.')
-      return null
-    }
-
-    const result = response.innerHTML.match(/(?<=<p>)(.*?)(?=<\/p>)/g)
-
-    if (!result) {
-      logger.error('Failed to parse response.')
-      return null
-    }
-
-    return result.join('\n').replace(/<strong>#\d+<\/strong>/, '')
   }
 
   /**
