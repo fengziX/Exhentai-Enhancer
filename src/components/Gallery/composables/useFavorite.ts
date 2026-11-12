@@ -36,21 +36,22 @@ export function useFavorite(favoriteInnerHtml: Ref<string>) {
     unsafeWindow.clicked_fav = () => null
 
     async function setFavorite(category: string) {
-      const formData = new FormData()
+      // 站方的表單解析只認 application/x-www-form-urlencoded，multipart（FormData）會被丟掉
+      const params = new URLSearchParams()
       const favoriteNote = (getElement<HTMLTextAreaElement>('[name=favnote]')?.value) as string
       // 這兩個字串是送出給站方的表單值（等同按鈕文字），站方靠它判斷動作，不能在地化
       const apply = category === 'favdel'
         ? 'Apply Changes'
         : 'Add to Favorites'
 
-      formData.append('favcat', category)
-      formData.append('favnote', favoriteNote)
-      formData.append('apply', apply)
-      formData.append('update', '1')
+      params.append('favcat', category)
+      params.append('favnote', favoriteNote)
+      params.append('apply', apply)
+      params.append('update', '1')
 
       const response = await fetch(getFavoritesLink(), {
         method: 'POST',
-        body: formData,
+        body: params,
       })
 
       const html = await response.text()

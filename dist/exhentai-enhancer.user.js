@@ -4,7 +4,7 @@
 // @name:zh-TW         Exhentai Enhancer 漢化版
 // @name:zh-CN         Exhentai Enhancer 汉化版
 // @namespace          https://github.com/sk2589822/Exhentai-Enhancer
-// @version            1.23.3
+// @version            1.23.4
 // @author             sk2589822
 // @description        改善画廊页、多页查看器和列表页的使用体验（简体中文汉化版）
 // @description:en     improve UX of Gallery Page, Multi-Page Viewer and Front Page (Simplified Chinese)
@@ -3874,6 +3874,10 @@ This will fail in production.`);
 		org: "Download Original Archive",
 		res: "Download Resample Archive"
 	};
+	var DOWNLOAD_TYPE_NAMES = {
+		org: "原始",
+		res: "重采样"
+	};
 	var DOWNLOAD_ACCEPTED_TEXT = "Locating archive server and preparing file for download...";
 	var HAH_ORIGINAL_RESOLUTION = "org";
 	var HAH_RESOLUTIONS = {
@@ -3908,6 +3912,12 @@ This will fail in production.`);
 	}
 	function getDirectDownloadUrl(root, dltype) {
 		return getElement(`form input[name="dltype"][value="${dltype}"]`, root)?.closest("form")?.getAttribute("action") ?? null;
+	}
+	function getDirectDownloadButton(dltype, root = document) {
+		return getElement(`input[value="${DOWNLOAD_LABELS[dltype]}"]`, root);
+	}
+	function isDirectDownloadOffered(dltype, root = document) {
+		return getDirectDownloadButton(dltype, root)?.disabled === false;
 	}
 	async function cancelArchiveSession() {
 		const url = getInvalidateForm()?.getAttribute("action");
@@ -4115,9 +4125,13 @@ This will fail in production.`);
 			if (resolution) return startHentaiAtHomeDownload(popup, resolution);
 			const dltype = getArchiveDownloadType(quickArchiveDownloadMethod.value);
 			if (!dltype) return true;
-			const downloadButton = getElement(`input[value="${DOWNLOAD_LABELS[dltype]}"]`, popup.value);
+			const downloadButton = getDirectDownloadButton(dltype, popup.value);
 			if (!downloadButton) {
 				logger.error(`download button for "${dltype}" not found.`);
+				return false;
+			}
+			if (downloadButton.disabled) {
+				toast.warning(`此画廊不提供${DOWNLOAD_TYPE_NAMES[dltype]}归档。\n 已打开弹窗`);
 				return false;
 			}
 			downloadButton.click();
@@ -4372,16 +4386,16 @@ This will fail in production.`);
 			});
 			_unsafeWindow.clicked_fav = () => null;
 			async function setFavorite(category) {
-				const formData = new FormData();
+				const params = new URLSearchParams();
 				const favoriteNote = getElement("[name=favnote]")?.value;
 				const apply = category === "favdel" ? "Apply Changes" : "Add to Favorites";
-				formData.append("favcat", category);
-				formData.append("favnote", favoriteNote);
-				formData.append("apply", apply);
-				formData.append("update", "1");
+				params.append("favcat", category);
+				params.append("favnote", favoriteNote);
+				params.append("apply", apply);
+				params.append("update", "1");
 				const script = ((await (await fetch(getFavoritesLink(), {
 					method: "POST",
-					body: formData
+					body: params
 				})).text()).match(/(if\(window\.opener\.document\.getElementById\("favoritelink"\)).*/)?.[0])?.replaceAll(".opener", "");
 				Function(script)();
 				isPopupShow.value = false;
@@ -4622,7 +4636,7 @@ This will fail in production.`);
 			}
 			function getActionableDownloadType() {
 				const dltype = getArchiveDownloadType(quickArchiveDownloadMethod.value);
-				return dltype && hasArchiveSession() ? dltype : null;
+				return dltype && isDirectDownloadOffered(dltype) && hasArchiveSession() ? dltype : null;
 			}
 			async function handleArchiveSessionAction() {
 				const dltype = getActionableDownloadType();
@@ -4803,22 +4817,15 @@ This will fail in production.`);
 			return getElement(`img[id^=imgsrc_${currentPage.value}]`);
 		}
 		function syncCurrentImageOnScroll() {
-			const imageContainers = getElements(".mimg");
-			let firstIntersectingIndex = 1;
-			const observer = new IntersectionObserver((entries) => {
-				firstIntersectingIndex = Number(entries[0].target.id.replace("image_", ""));
-			});
-			imageContainers.forEach((container) => {
-				observer.observe(container);
-			});
+			const imageContainers = [...getElements(".mimg")];
 			paneImagesDiv.addEventListener("scroll", () => {
 				const visibleImageContainers = [];
-				for (let index = Math.max(firstIntersectingIndex - 1, 1); index < imageContainers.length; index++) {
-					const percentage = getVisiblePercentageInViewport(imageContainers[index - 1]);
-					if (percentage > 0) visibleImageContainers.push({
-						index,
-						percentage,
-						element: imageContainers[index]
+				for (let i = getFirstVisibleIndex(imageContainers); i < imageContainers.length; i++) {
+					const percentage = getVisiblePercentageInViewport(imageContainers[i]);
+					if (percentage === 0) break;
+					visibleImageContainers.push({
+						index: i + 1,
+						percentage
 					});
 				}
 				if (visibleImageContainers.length === 0) return;
@@ -4829,6 +4836,16 @@ This will fail in production.`);
 					if (largest.percentage / secondLargest.percentage >= 2) currentPage.value = largest.index;
 				}
 			});
+		}
+		function getFirstVisibleIndex(containersInPageOrder) {
+			let low = 0;
+			let high = containersInPageOrder.length;
+			while (low < high) {
+				const middle = Math.floor((low + high) / 2);
+				if (containersInPageOrder[middle].getBoundingClientRect().bottom > 0) high = middle;
+				else low = middle + 1;
+			}
+			return low;
 		}
 		function getVisiblePercentageInViewport(element) {
 			const viewportHeight = window.innerHeight;

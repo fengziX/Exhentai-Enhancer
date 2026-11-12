@@ -22,6 +22,14 @@ const DOWNLOAD_LABELS: Record<ArchiveDownloadType, string> = {
 }
 
 /**
+ * 顯示給使用者看的歸檔類型名稱
+ */
+const DOWNLOAD_TYPE_NAMES: Record<ArchiveDownloadType, string> = {
+  org: '原始',
+  res: '重采样',
+}
+
+/**
  * 站方回應中代表「已接受下載請求」的英文句子，用來判斷請求是否成功，不能翻譯
  */
 const DOWNLOAD_ACCEPTED_TEXT = 'Locating archive server and preparing file for download...'
@@ -114,6 +122,22 @@ function getDirectDownloadUrl(root: Document | HTMLElement, dltype: ArchiveDownl
   return getElement(`form input[name="dltype"][value="${dltype}"]`, root)
     ?.closest('form')
     ?.getAttribute('action') ?? null
+}
+
+/**
+ * 找出直接下載的按鈕
+ *
+ * 站方對這本 gallery 不提供的類型會把按鈕設成 disabled，而不是移除它
+ */
+function getDirectDownloadButton(dltype: ArchiveDownloadType, root: Document | HTMLElement = document) {
+  return getElement<HTMLInputElement>(`input[value="${DOWNLOAD_LABELS[dltype]}"]`, root)
+}
+
+/**
+ * 這本 gallery 是否提供指定類型的直接下載
+ */
+export function isDirectDownloadOffered(dltype: ArchiveDownloadType, root: Document | HTMLElement = document) {
+  return getDirectDownloadButton(dltype, root)?.disabled === false
 }
 
 /**
@@ -449,9 +473,15 @@ export function useArchive() {
       return true
     }
 
-    const downloadButton = getElement(`input[value="${DOWNLOAD_LABELS[dltype]}"]`, popup.value)
+    const downloadButton = getDirectDownloadButton(dltype, popup.value)
     if (!downloadButton) {
       logger.error(`download button for "${dltype}" not found.`)
+      return false
+    }
+
+    // 按鈕是 disabled 就代表站方沒提供這個類型，點下去不會有反應，改為開彈窗讓使用者自己看
+    if (downloadButton.disabled) {
+      toast.warning(`此画廊不提供${DOWNLOAD_TYPE_NAMES[dltype]}归档。\n 已打开弹窗`)
       return false
     }
 

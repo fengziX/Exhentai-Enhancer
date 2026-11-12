@@ -9,7 +9,7 @@ import {
   getTorrentLinkAnchor,
 } from '@/components/Gallery/utils/elements'
 import { setWheelStep } from '@/utils/wheel-step'
-import { getArchiveDownloadType, hasArchiveSession, useArchive } from '@/composables/useArchive'
+import { getArchiveDownloadType, hasArchiveSession, isDirectDownloadOffered, useArchive } from '@/composables/useArchive'
 import { usePopups } from '@/composables/usePopups'
 import {
   scrollByRowSwitch,
@@ -128,13 +128,17 @@ function setArchiveClickEvent() {
 }
 
 /**
- * Archive Session Action 只在「設定為直接下載」且「存在未失效的 archive session」時適用
+ * Archive Session Action 只在「設定為直接下載」、「這本 gallery 提供該類型」
+ * 且「存在未失效的 archive session」時適用
+ *
+ * 不提供時必須交回原本的流程。否則「先取消再下載」會先把付費的 session 取消掉，
+ * 而 archiver 收到不提供的類型時不會報錯，會改成重新解鎖 Original —— 等於白花 GP
  *
  * @returns 適用時回傳要下載的類型，不適用時回傳 null
  */
 function getActionableDownloadType() {
   const dltype = getArchiveDownloadType(quickArchiveDownloadMethod.value)
-  return dltype && hasArchiveSession() ? dltype : null
+  return dltype && isDirectDownloadOffered(dltype) && hasArchiveSession() ? dltype : null
 }
 
 /**

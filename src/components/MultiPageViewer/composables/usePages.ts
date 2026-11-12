@@ -123,28 +123,20 @@ export function _usePages() {
   }
 
   function syncCurrentImageOnScroll() {
-    const imageContainers = getElements('.mimg') as NodeListOf<HTMLElement>
-
-    let firstIntersectingIndex = 1
-
-    const observer = new IntersectionObserver(entries => {
-      firstIntersectingIndex = Number(entries[0].target.id.replace('image_', ''))
-    })
-    imageContainers.forEach(container => {
-      observer.observe(container)
-    })
+    const imageContainers = [...getElements('.mimg') as NodeListOf<HTMLElement>]
 
     paneImagesDiv.addEventListener('scroll', () => {
       const visibleImageContainers = []
-      for (let index = Math.max(firstIntersectingIndex - 1, 1); index < imageContainers.length; index++) {
-        const percentage = getVisiblePercentageInViewport(imageContainers[index - 1])
-        if (percentage > 0) {
-          visibleImageContainers.push({
-            index,
-            percentage,
-            element: imageContainers[index],
-          })
+      for (let i = getFirstVisibleIndex(imageContainers); i < imageContainers.length; i++) {
+        const percentage = getVisiblePercentageInViewport(imageContainers[i])
+        if (percentage === 0) {
+          break
         }
+
+        visibleImageContainers.push({
+          index: i + 1,
+          percentage,
+        })
       }
 
       if (visibleImageContainers.length === 0) {
@@ -159,6 +151,28 @@ export function _usePages() {
         }
       }
     })
+  }
+
+  /**
+   * 二分搜尋第一個「底邊還在視窗下方」的圖片容器
+   *
+   * 容器按頁序排列，所以每次滾動都從頭找。原本用 IntersectionObserver 記住
+   * 「上一個交叉的索引」再往後掃，滾回第 1 頁時那個索引還停在後面的頁，
+   * 導致頁碼電梯不同步
+   */
+  function getFirstVisibleIndex(containersInPageOrder: HTMLElement[]) {
+    let low = 0
+    let high = containersInPageOrder.length
+    while (low < high) {
+      const middle = Math.floor((low + high) / 2)
+      if (containersInPageOrder[middle].getBoundingClientRect().bottom > 0) {
+        high = middle
+      } else {
+        low = middle + 1
+      }
+    }
+
+    return low
   }
 
   function getVisiblePercentageInViewport(element: HTMLElement) {
